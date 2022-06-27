@@ -35,11 +35,6 @@ func (downtimeRepo *downtimeRepo) Create(downtime *entity.Downtime) (*entity.Dow
 func (downtimeRepo *downtimeRepo) Get(id string) (*entity.Downtime, error) {
 	downtime := entity.Downtime{}
 	getErr := downtimeRepo.db.
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
@@ -53,11 +48,6 @@ func (downtimeRepo *downtimeRepo) Get(id string) (*entity.Downtime, error) {
 func (downtimeRepo *downtimeRepo) List(conditions string) ([]entity.Downtime, error) {
 	downtimes := []entity.Downtime{}
 	getErr := downtimeRepo.db.
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
@@ -80,11 +70,6 @@ func (downtimeRepo *downtimeRepo) Update(id string, update *entity.Downtime) (*e
 	}
 	updated := entity.Downtime{}
 	downtimeRepo.db.
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").

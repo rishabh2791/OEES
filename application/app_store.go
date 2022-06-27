@@ -12,7 +12,6 @@ type AppStore struct {
 	DowntimePresetApp *presetDowntimeApp
 	JobApp            *jobApp
 	LineApp           *lineApp
-	PlantApp          *plantApp
 	ShiftApp          *shiftApp
 	SKUApp            *skuApp
 	SKUSpeedApp       *skuSpeedApp
@@ -33,7 +32,6 @@ func NewAppStore(repoStore *persistance.RepoStore) *AppStore {
 		DowntimePresetApp: newPresetDowntimeApp(repoStore.DowntimePresetRepo),
 		JobApp:            newJobApp(repoStore.JobRepo),
 		LineApp:           newlineApp(repoStore.LineRepo),
-		PlantApp:          newplantApp(repoStore.PlantRepo),
 		ShiftApp:          newshiftApp(repoStore.ShiftRepo),
 		SKUApp:            newskuApp(repoStore.SkuRepo),
 		SKUSpeedApp:       newskuSpeedApp(repoStore.SkuSpeedRepo),

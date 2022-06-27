@@ -35,10 +35,6 @@ func (shiftRepo *shiftRepo) Create(shift *entity.Shift) (*entity.Shift, error) {
 func (shiftRepo *shiftRepo) Get(id string) (*entity.Shift, error) {
 	shift := entity.Shift{}
 	getErr := shiftRepo.db.
-		Preload("Plant.CreatedBy").
-		Preload("Plant.CreatedBy.UserRole").
-		Preload("Plant.UpdatedBy").
-		Preload("Plant.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", id).Take(&shift).Error
@@ -48,10 +44,6 @@ func (shiftRepo *shiftRepo) Get(id string) (*entity.Shift, error) {
 func (shiftRepo *shiftRepo) List(conditions string) ([]entity.Shift, error) {
 	shifts := []entity.Shift{}
 	getErr := shiftRepo.db.
-		Preload("Plant.CreatedBy").
-		Preload("Plant.CreatedBy.UserRole").
-		Preload("Plant.UpdatedBy").
-		Preload("Plant.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where(conditions).Find(&shifts).Error
@@ -70,10 +62,6 @@ func (shiftRepo *shiftRepo) Update(id string, update *entity.Shift) (*entity.Shi
 	}
 	updated := entity.Shift{}
 	shiftRepo.db.
-		Preload("Plant.CreatedBy").
-		Preload("Plant.CreatedBy.UserRole").
-		Preload("Plant.UpdatedBy").
-		Preload("Plant.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", id).Take(&updated)

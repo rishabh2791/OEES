@@ -37,11 +37,6 @@ func (deviceRepo *deviceRepo) Get(id string) (*entity.Device, error) {
 	getErr := deviceRepo.db.
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
@@ -55,11 +50,6 @@ func (deviceRepo *deviceRepo) List(conditions string) ([]entity.Device, error) {
 	getErr := deviceRepo.db.
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
@@ -82,11 +72,6 @@ func (deviceRepo *deviceRepo) Update(id string, update *entity.Device) (*entity.
 	deviceRepo.db.
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").

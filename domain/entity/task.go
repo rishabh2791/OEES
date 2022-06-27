@@ -11,9 +11,8 @@ import (
 type Task struct {
 	value_objects.BaseModel
 	ID                string     `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	Code              string     `json:"code" gorm:"size:10;not null;"`
-	SKUID             string     `json:"sku_id" gorm:"size:191;not null;column:sku_id;"`
-	SKU               *SKU       `json:"sku" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE;"`
+	JobID             string     `json:"job_id" gorm:"size:191;not null;"`
+	Job               *Job       `json:"job"`
 	LineID            string     `json:"line_id" gorm:"size:191;not null;"`
 	Line              *Line      `json:"line" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE;"`
 	StartTime         *time.Time `json:"start_time"`

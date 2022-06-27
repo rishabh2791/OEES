@@ -21,6 +21,7 @@ type jobAppInterface interface {
 	Create(job *entity.Job) (*entity.Job, error)
 	Get(id string) (*entity.Job, error)
 	List(conditions string) ([]entity.Job, error)
+	PullFromRemote(username string) error
 }
 
 func (jobApp *jobApp) Create(job *entity.Job) (*entity.Job, error) {
@@ -33,4 +34,8 @@ func (jobApp *jobApp) Get(id string) (*entity.Job, error) {
 
 func (jobApp *jobApp) List(conditions string) ([]entity.Job, error) {
 	return jobApp.jobReporitory.List(conditions)
+}
+
+func (jobApp *jobApp) PullFromRemote(username string) error {
+	return jobApp.jobReporitory.PullFromRemote(username)
 }

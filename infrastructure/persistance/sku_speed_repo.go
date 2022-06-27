@@ -35,20 +35,10 @@ func (skuSpeedRepo *skuSpeedRepo) Create(skuSpeed *entity.SKUSpeed) (*entity.SKU
 func (skuSpeedRepo *skuSpeedRepo) Get(id string) (*entity.SKUSpeed, error) {
 	skuSpeed := entity.SKUSpeed{}
 	getErr := skuSpeedRepo.db.
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
 		Preload("Line.UpdatedBy.UserRole").
-		Preload("SKU.Plant").
-		Preload("SKU.Plant.CreatedBy").
-		Preload("SKU.Plant.CreatedBy.UserRole").
-		Preload("SKU.Plant.UpdatedBy").
-		Preload("SKU.Plant.UpdatedBy.UserRole").
 		Preload("SKU.CreatedBy").
 		Preload("SKU.CreatedBy.UserRole").
 		Preload("SKU.UpdatedBy").
@@ -62,20 +52,10 @@ func (skuSpeedRepo *skuSpeedRepo) Get(id string) (*entity.SKUSpeed, error) {
 func (skuSpeedRepo *skuSpeedRepo) List(conditions string) ([]entity.SKUSpeed, error) {
 	skuSpeeds := []entity.SKUSpeed{}
 	getErr := skuSpeedRepo.db.
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
 		Preload("Line.UpdatedBy.UserRole").
-		Preload("SKU.Plant").
-		Preload("SKU.Plant.CreatedBy").
-		Preload("SKU.Plant.CreatedBy.UserRole").
-		Preload("SKU.Plant.UpdatedBy").
-		Preload("SKU.Plant.UpdatedBy.UserRole").
 		Preload("SKU.CreatedBy").
 		Preload("SKU.CreatedBy.UserRole").
 		Preload("SKU.UpdatedBy").
@@ -98,20 +78,10 @@ func (skuSpeedRepo *skuSpeedRepo) Update(id string, update *entity.SKUSpeed) (*e
 	}
 	updated := entity.SKUSpeed{}
 	skuSpeedRepo.db.
-		Preload("Line.Plant").
-		Preload("Line.Plant.CreatedBy").
-		Preload("Line.Plant.CreatedBy.UserRole").
-		Preload("Line.Plant.UpdatedBy").
-		Preload("Line.Plant.UpdatedBy.UserRole").
 		Preload("Line.CreatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy").
 		Preload("Line.UpdatedBy.UserRole").
-		Preload("SKU.Plant").
-		Preload("SKU.Plant.CreatedBy").
-		Preload("SKU.Plant.CreatedBy.UserRole").
-		Preload("SKU.Plant.UpdatedBy").
-		Preload("SKU.Plant.UpdatedBy.UserRole").
 		Preload("SKU.CreatedBy").
 		Preload("SKU.CreatedBy.UserRole").
 		Preload("SKU.UpdatedBy").

@@ -39,11 +39,6 @@ func (deviceDataRepo *deviceDataRepo) List(conditions string) ([]entity.DeviceDa
 		Preload("Device.CreatedBy.UserRole").
 		Preload("Device.UpdatedBy").
 		Preload("Device.UpdatedBy.UserRole").
-		Preload("Device.Line.Plant").
-		Preload("Device.Line.Plant.CreatedBy").
-		Preload("Device.Line.Plant.CreatedBy.UserRole").
-		Preload("Device.Line.Plant.UpdatedBy").
-		Preload("Device.Line.Plant.UpdatedBy.UserRole").
 		Preload("Device.Line.CreatedBy").
 		Preload("Device.Line.CreatedBy.UserRole").
 		Preload("Device.Line.UpdatedBy").

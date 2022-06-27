@@ -9,15 +9,14 @@ import (
 
 type SKU struct {
 	value_objects.BaseModel
-	ID                string `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	PlantCode         string `json:"plant_code" gorm:"size:6;not null;uniqueIndex:plant_sku;"`
-	Plant             *Plant `json:"plant" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE;"`
-	Code              string `json:"code" gorm:"size:20;not null;uniqueIndex:plant_sku;"`
-	Description       string `json:"description" gorm:"size:100;not null;"`
-	CreatedByUsername string `json:"created_by_username" gorm:"size:20;not null;"`
-	CreatedBy         *User  `json:"created_by"`
-	UpdatedByUsername string `json:"updated_by_username" gorm:"size:20;not null;"`
-	UpdatedBy         *User  `json:"updated_by"`
+	ID                string  `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
+	Code              string  `json:"code" gorm:"size:20;not null;"`
+	Description       string  `json:"description" gorm:"size:100;not null;"`
+	CaseLot           float32 `json:"case_lot" gorm:"default:1;"`
+	CreatedByUsername string  `json:"created_by_username" gorm:"size:20;not null;"`
+	CreatedBy         *User   `json:"created_by"`
+	UpdatedByUsername string  `json:"updated_by_username" gorm:"size:20;not null;"`
+	UpdatedBy         *User   `json:"updated_by"`
 }
 
 var _ Model = &SKU{}

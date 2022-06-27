@@ -10,8 +10,6 @@ import (
 type Shift struct {
 	value_objects.BaseModel
 	ID                string `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	PlantCode         string `json:"plant_code" gorm:"size:6;not null;uniqueIndex:plant_shift;"`
-	Plant             *Plant `json:"plant"`
 	Code              string `json:"code" gorm:"size:2;not null;uniqueIndex:plant_shift;"`
 	Description       string `json:"description" gorm:"size:100;not null;"`
 	StartTime         string `json:"start_time" gorm:"size:5;not null;"`

@@ -17,7 +17,6 @@ type InterfaceStore struct {
 	DowntimePresetInterface *DowntimePresetInterface
 	JobInterface            *JobInterface
 	LineInterface           *LineInterface
-	PlantInterface          *PlantInterface
 	ShiftInterface          *ShiftInterface
 	SKUInterface            *SKUInterface
 	SKUSpeedInterface       *SKUSpeedInterface
@@ -39,7 +38,6 @@ func NewInterfaceStore(appStore *application.AppStore, logger hclog.Logger) *Int
 		DowntimePresetInterface: NewDowntimePresetInterface(appStore, logger),
 		JobInterface:            (*JobInterface)(NewJobInterface(appStore, logger)),
 		LineInterface:           NewlineInterface(appStore, logger),
-		PlantInterface:          NewplantInterface(appStore, logger),
 		ShiftInterface:          NewshiftInterface(appStore, logger),
 		SKUInterface:            NewskuInterface(appStore, logger),
 		SKUSpeedInterface:       NewskuSpeedInterface(appStore, logger),

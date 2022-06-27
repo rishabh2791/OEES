@@ -150,3 +150,35 @@ func (jobInterface *JobInterface) List(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (jobInterface *JobInterface) PullFromRemote(ctx *gin.Context) {
+	response := value_objects.Response{}
+
+	requestingUser, ok := ctx.Get("user")
+	if !ok {
+		response.Status = false
+		response.Message = "Anonymous User."
+		response.Payload = ""
+
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+	user := requestingUser.(*entity.User)
+
+	remoteErr := jobInterface.appStore.JobApp.PullFromRemote(user.Username)
+	if remoteErr != nil {
+		response.Status = false
+		response.Message = remoteErr.Error()
+		response.Payload = ""
+
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Return response.
+	response.Status = true
+	response.Message = "Jobs Created."
+	response.Payload = ""
+
+	ctx.JSON(http.StatusOK, response)
+}

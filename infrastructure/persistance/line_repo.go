@@ -35,10 +35,6 @@ func (lineRepo *lineRepo) Create(line *entity.Line) (*entity.Line, error) {
 func (lineRepo *lineRepo) Get(id string) (*entity.Line, error) {
 	line := entity.Line{}
 	getErr := lineRepo.db.
-		Preload("Plant.CreatedBy").
-		Preload("Plant.CreatedBy.UserRole").
-		Preload("Plant.UpdatedBy").
-		Preload("Plant.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", id).Take(&line).Error
@@ -48,10 +44,6 @@ func (lineRepo *lineRepo) Get(id string) (*entity.Line, error) {
 func (lineRepo *lineRepo) List(conditions string) ([]entity.Line, error) {
 	lines := []entity.Line{}
 	getErr := lineRepo.db.
-		Preload("Plant.CreatedBy").
-		Preload("Plant.CreatedBy.UserRole").
-		Preload("Plant.UpdatedBy").
-		Preload("Plant.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where(conditions).Find(&lines).Error
@@ -70,10 +62,6 @@ func (lineRepo *lineRepo) Update(id string, update *entity.Line) (*entity.Line, 
 	}
 	updated := entity.Line{}
 	lineRepo.db.
-		Preload("Plant.CreatedBy").
-		Preload("Plant.CreatedBy.UserRole").
-		Preload("Plant.UpdatedBy").
-		Preload("Plant.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", id).Take(&updated)

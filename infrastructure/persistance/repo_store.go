@@ -27,7 +27,6 @@ type RepoStore struct {
 	DowntimePresetRepo *presetDowntimeRepo
 	JobRepo            *jobRepo
 	LineRepo           *lineRepo
-	PlantRepo          *plantRepo
 	ShiftRepo          *shiftRepo
 	SkuRepo            *skuRepo
 	SkuSpeedRepo       *skuSpeedRepo
@@ -48,6 +47,7 @@ func NewRepoStore(config *utilities.ServerConfig, logging hclog.Logger) (*RepoSt
 	}
 
 	mysqlURL := databaseConfig.DbUser + ":" + databaseConfig.DbPassword + "@tcp(" + databaseConfig.DbHost + ":" + databaseConfig.DbPort + ")/" + databaseConfig.DbName + "?parseTime=True"
+
 	gormDB, gormErr := gorm.Open(mysql.Open(mysqlURL), &gorm.Config{
 		Logger:               logger.Default.LogMode(logger.Silent),
 		QueryFields:          true,
@@ -83,9 +83,8 @@ func NewRepoStore(config *utilities.ServerConfig, logging hclog.Logger) (*RepoSt
 	repoStore.DeviceDataRepo = newDeviceDataRepo(gormDB, logging)
 	repoStore.DowntimeRepo = newdowntimeRepo(gormDB, logging)
 	repoStore.DowntimePresetRepo = newPresetDowntimeRepo(gormDB, logging)
-	repoStore.JobRepo = newJobRepo(gormDB, logging)
+	repoStore.JobRepo = newJobRepo(gormDB, repoStore.warehouseDB, logging)
 	repoStore.LineRepo = newlineRepo(gormDB, logging)
-	repoStore.PlantRepo = newplantRepo(gormDB, logging)
 	repoStore.ShiftRepo = newshiftRepo(gormDB, logging)
 	repoStore.SkuRepo = newskuRepo(gormDB, logging)
 	repoStore.TaskRepo = NewTaskRepo(gormDB, logging)
@@ -102,7 +101,6 @@ func (repoStore *RepoStore) Migrate() error {
 		&entity.UserRole{},
 		&entity.User{},
 		&entity.UserRoleAccess{},
-		&entity.Plant{},
 		&entity.Line{},
 		&entity.Device{},
 		&entity.DeviceData{},
