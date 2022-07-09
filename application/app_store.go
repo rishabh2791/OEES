@@ -16,6 +16,7 @@ type AppStore struct {
 	SKUApp            *skuApp
 	SKUSpeedApp       *skuSpeedApp
 	TaskApp           *taskApp
+	TaskBatchApp      *taskBatchApp
 	UserRoleApp       *userRoleApp
 	UserApp           *userApp
 	UserRoleAccessApp *userRoleAccessApp
@@ -36,6 +37,7 @@ func NewAppStore(repoStore *persistance.RepoStore) *AppStore {
 		SKUApp:            newskuApp(repoStore.SkuRepo),
 		SKUSpeedApp:       newskuSpeedApp(repoStore.SkuSpeedRepo),
 		TaskApp:           newTaskApp(repoStore.TaskRepo),
+		TaskBatchApp:      newTaskBatchApp(repoStore.TaskBatchRepo),
 		UserRoleApp:       newuserRoleApp(repoStore.UserRoleRepo),
 		UserApp:           newUserApp(repoStore.UserRepo),
 		UserRoleAccessApp: NewUserRoleAccessApp(repoStore.UserRoleAccessRepo),

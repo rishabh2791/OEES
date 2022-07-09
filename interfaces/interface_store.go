@@ -21,6 +21,7 @@ type InterfaceStore struct {
 	SKUInterface            *SKUInterface
 	SKUSpeedInterface       *SKUSpeedInterface
 	TaskInterface           *TaskInterface
+	TaskBatchInterface      *TaskBatchInterface
 	UserRoleInterface       *UserRoleInterface
 	UserInterface           *UserInterface
 	UserRoleAccessInterface *UserRoleAccessInterface
@@ -42,6 +43,7 @@ func NewInterfaceStore(appStore *application.AppStore, logger hclog.Logger) *Int
 		SKUInterface:            NewskuInterface(appStore, logger),
 		SKUSpeedInterface:       NewskuSpeedInterface(appStore, logger),
 		TaskInterface:           NewTaskInterface(appStore, logger),
+		TaskBatchInterface:      newTaskBatchInterface(appStore, logger),
 		UserRoleInterface:       NewuserRoleInterface(appStore, logger),
 		UserInterface:           NewUserInterface(appStore, logger),
 		UserRoleAccessInterface: NewUserRoleAccessInterface(appStore, logger),

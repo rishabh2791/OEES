@@ -31,6 +31,7 @@ type RepoStore struct {
 	SkuRepo            *skuRepo
 	SkuSpeedRepo       *skuSpeedRepo
 	TaskRepo           *taskRepo
+	TaskBatchRepo      *taskBatchRepo
 	UserRepo           *userRepo
 	UserRoleRepo       *userRoleRepo
 	UserRoleAccessRepo *UserRoleAccessRepo
@@ -88,6 +89,7 @@ func NewRepoStore(config *utilities.ServerConfig, logging hclog.Logger) (*RepoSt
 	repoStore.ShiftRepo = newshiftRepo(gormDB, logging)
 	repoStore.SkuRepo = newskuRepo(gormDB, logging)
 	repoStore.TaskRepo = NewTaskRepo(gormDB, logging)
+	repoStore.TaskBatchRepo = newTaskBatchRepo(gormDB, logging)
 	repoStore.SkuSpeedRepo = newskuSpeedRepo(gormDB, logging)
 	repoStore.UserRepo = newuserRepo(gormDB, logging)
 	repoStore.UserRoleRepo = newUserRoleRepo(gormDB, logging)
@@ -109,6 +111,7 @@ func (repoStore *RepoStore) Migrate() error {
 		&entity.SKU{},
 		&entity.SKUSpeed{},
 		&entity.Task{},
+		&entity.TaskBatch{},
 		&entity.Job{},
 		&entity.PresetDowntime{},
 	)

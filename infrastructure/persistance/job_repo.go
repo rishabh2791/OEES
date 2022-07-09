@@ -101,6 +101,7 @@ func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 			existingSKU = *material
 		}
 		job.SKUID = existingSKU.ID
+		job.SKU = &existingSKU
 		job.Plan = float32(quantity)
 
 		creationErr := jobRepo.db.Create(&job).Error

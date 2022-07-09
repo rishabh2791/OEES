@@ -10,7 +10,7 @@ import (
 type Line struct {
 	value_objects.BaseModel
 	ID                string `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	Code              string `json:"code" gorm:"size:10;not null;uniqueIndex:plant_line;"`
+	Code              string `json:"code" gorm:"size:6;not null;primaryKey;unique;"`
 	Name              string `json:"name" gorm:"size:100;not null;"`
 	IPAddress         string `json:"ip_address" gorm:"size:16;"`
 	CreatedByUsername string `json:"created_by_username" gorm:"size:20;not null;"`

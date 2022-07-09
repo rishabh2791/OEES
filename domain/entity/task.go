@@ -11,12 +11,16 @@ import (
 type Task struct {
 	value_objects.BaseModel
 	ID                string     `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	JobID             string     `json:"job_id" gorm:"size:191;not null;"`
+	JobID             string     `json:"job_id" gorm:"size:191;not null;uniqueIndex:job_line;"`
 	Job               *Job       `json:"job"`
-	LineID            string     `json:"line_id" gorm:"size:191;not null;"`
+	LineID            string     `json:"line_id" gorm:"size:191;not null;uniqueIndex:job_line;"`
 	Line              *Line      `json:"line" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE;"`
+	ScheduledDate     *time.Time `json:"scheduled_date"`
+	ShiftID           string     `json:"shift_id" gorm:"size:191;not null;"`
+	Shift             *Shift     `json:"shift"`
 	StartTime         *time.Time `json:"start_time"`
 	EndTime           *time.Time `json:"end_time"`
+	Complete          bool       `json:"complete" gorm:"default:false;"`
 	Plan              int16      `json:"plan" gorm:"default:1;"`
 	Actual            int16      `json:"actual" gorm:"default:0;"`
 	CreatedByUsername string     `json:"created_by_username" gorm:"size:20;not null;"`

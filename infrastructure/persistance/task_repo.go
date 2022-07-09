@@ -48,6 +48,10 @@ func (taskRepo *taskRepo) Get(id string) (*entity.Task, error) {
 		Preload("Line.UpdatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy.UserRole").
+		Preload("Shift.CreatedBy").
+		Preload("Shift.UpdatedBy").
+		Preload("Shift.CreatedBy.UserRole").
+		Preload("Shift.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", id).Take(&task).Error
@@ -70,6 +74,10 @@ func (taskRepo *taskRepo) List(conditions string) ([]entity.Task, error) {
 		Preload("Line.UpdatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy.UserRole").
+		Preload("Shift.CreatedBy").
+		Preload("Shift.UpdatedBy").
+		Preload("Shift.CreatedBy.UserRole").
+		Preload("Shift.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where(conditions).Find(&tasks).Error
@@ -104,6 +112,10 @@ func (taskRepo *taskRepo) Update(id string, update *entity.Task) (*entity.Task, 
 		Preload("Line.UpdatedBy").
 		Preload("Line.CreatedBy.UserRole").
 		Preload("Line.UpdatedBy.UserRole").
+		Preload("Shift.CreatedBy").
+		Preload("Shift.UpdatedBy").
+		Preload("Shift.CreatedBy.UserRole").
+		Preload("Shift.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).
