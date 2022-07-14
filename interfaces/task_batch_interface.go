@@ -60,7 +60,7 @@ func (taskBatchInterface *TaskBatchInterface) Create(ctx *gin.Context) {
 func (taskBatchInterface *TaskBatchInterface) List(ctx *gin.Context) {
 	response := value_objects.Response{}
 
-	id := ctx.Param("id")
+	id := ctx.Param("taskID")
 	task, err := taskBatchInterface.appStore.TaskBatchApp.List(id)
 	if err != nil {
 		response.Status = false
@@ -80,7 +80,7 @@ func (taskBatchInterface *TaskBatchInterface) List(ctx *gin.Context) {
 
 func (taskBatchInterface *TaskBatchInterface) Update(ctx *gin.Context) {
 	response := value_objects.Response{}
-	id := ctx.Param("id")
+	id := ctx.Param("taskID")
 
 	// Get new entry details from request body.
 	model := entity.TaskBatch{}

@@ -24,5 +24,5 @@ func newTaskBatchRouter(router *gin.RouterGroup, interfaceStore *interfaces.Inte
 func (router *TaskBatchRouter) ServeRoutes() {
 	router.router.POST("/create/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.TaskBatchInterface.Create)
 	router.router.GET("/:taskID/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.TaskBatchInterface.List)
-	router.router.PATCH("/:id/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.TaskBatchInterface.Update)
+	router.router.PATCH("/:taskID/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.TaskBatchInterface.Update)
 }

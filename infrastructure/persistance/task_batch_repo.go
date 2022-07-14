@@ -36,12 +36,36 @@ func (taskBatchRepo *taskBatchRepo) Create(taskBatch *entity.TaskBatch) (*entity
 
 	creationErr := taskBatchRepo.db.Create(&taskBatch).Error
 
-	return taskBatch, creationErr
+	createdTaskBatch := entity.TaskBatch{}
+	taskBatchRepo.db.
+		Preload("Task.Job.SKU").
+		Preload("Task.Job.SKU.CreatedBy").
+		Preload("Task.Job.SKU.UpdatedBy").
+		Preload("Task.Job.SKU.CreatedBy.UserRole").
+		Preload("Task.Job.SKU.UpdatedBy.UserRole").
+		Preload("Task.Job.CreatedBy").
+		Preload("Task.Job.UpdatedBy").
+		Preload("Task.Job.CreatedBy.UserRole").
+		Preload("Task.Job.UpdatedBy.UserRole").
+		Preload("Task.Line.CreatedBy").
+		Preload("Task.Line.UpdatedBy").
+		Preload("Task.Line.CreatedBy.UserRole").
+		Preload("Task.Line.UpdatedBy.UserRole").
+		Preload("Task.Shift.CreatedBy").
+		Preload("Task.Shift.UpdatedBy").
+		Preload("Task.Shift.CreatedBy.UserRole").
+		Preload("Task.Shift.UpdatedBy.UserRole").
+		Preload("Task.CreatedBy.UserRole").
+		Preload("Task.UpdatedBy.UserRole").
+		Preload("CreatedBy.UserRole").
+		Preload("UpdatedBy.UserRole").
+		Preload(clause.Associations).Where("task_id = ?", taskID).Find(&createdTaskBatch)
+
+	return &createdTaskBatch, creationErr
 }
 
 func (taskBatchRepo *taskBatchRepo) List(taskID string) ([]entity.TaskBatch, error) {
 	taskBatches := []entity.TaskBatch{}
-
 	getErr := taskBatchRepo.db.
 		Preload("Task.Job.SKU").
 		Preload("Task.Job.SKU.CreatedBy").
@@ -68,7 +92,7 @@ func (taskBatchRepo *taskBatchRepo) List(taskID string) ([]entity.TaskBatch, err
 	return taskBatches, getErr
 }
 
-func (taskBatchRepo *taskBatchRepo) Update(taskID string, taskBatch *entity.TaskBatch) (*entity.TaskBatch, error) {
+func (taskBatchRepo *taskBatchRepo) Update(taskID string, update *entity.TaskBatch) (*entity.TaskBatch, error) {
 	existingTaskBatch := entity.TaskBatch{}
 
 	getErr := taskBatchRepo.db.
@@ -93,19 +117,20 @@ func (taskBatchRepo *taskBatchRepo) Update(taskID string, taskBatch *entity.Task
 		Preload("Task.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("task_id = ?", taskID).Find(&existingTaskBatch).Error
+		Preload(clause.Associations).Where("id = ?", taskID).Find(&existingTaskBatch).Error
 
 	if getErr != nil {
 		return nil, getErr
 	}
 
-	updationErr := taskBatchRepo.db.Table(existingTaskBatch.Tablename()).Where("task_id = ?", taskID).Updates(taskBatch).Error
+	updationErr := taskBatchRepo.db.Table(existingTaskBatch.Tablename()).Where("id = ?", taskID).Updates(update).Error
 	if updationErr != nil {
 		return nil, updationErr
 	}
 
 	updated := entity.TaskBatch{}
-	taskBatchRepo.db.Preload("Task.Job.SKU").
+	taskBatchRepo.db.
+		Preload("Task.Job.SKU").
 		Preload("Task.Job.SKU.CreatedBy").
 		Preload("Task.Job.SKU.UpdatedBy").
 		Preload("Task.Job.SKU.CreatedBy.UserRole").
@@ -126,7 +151,7 @@ func (taskBatchRepo *taskBatchRepo) Update(taskID string, taskBatch *entity.Task
 		Preload("Task.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("task_id = ?", taskID).Take(&updated)
+		Preload(clause.Associations).Where("id = ?", taskID).Take(&updated)
 
 	return &updated, nil
 }
