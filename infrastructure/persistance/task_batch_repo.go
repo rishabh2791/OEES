@@ -59,7 +59,7 @@ func (taskBatchRepo *taskBatchRepo) Create(taskBatch *entity.TaskBatch) (*entity
 		Preload("Task.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("task_id = ?", taskID).Find(&createdTaskBatch)
+		Preload(clause.Associations).Where("id = ?", taskBatch.ID).Find(&createdTaskBatch)
 
 	return &createdTaskBatch, creationErr
 }

@@ -11,9 +11,9 @@ import (
 type TaskBatch struct {
 	value_objects.BaseModel
 	ID                string     `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	TaskID            string     `json:"task_id" gorm:"size:191;not null;"`
+	TaskID            string     `json:"task_id" gorm:"size:191;not null;uniqueIndex:task_batch;"`
 	Task              *Task      `json:"task"`
-	BatchNumber       string     `json:"batch_number" gorm:"size:20;not null;"`
+	BatchNumber       string     `json:"batch_number" gorm:"size:20;not null;uniqueIndex:task_batch;"`
 	StartTime         time.Time  `json:"start_time"`
 	EndTime           *time.Time `json:"end_time"`
 	Complete          bool       `json:"complete"`

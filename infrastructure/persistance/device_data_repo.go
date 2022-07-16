@@ -1,7 +1,6 @@
 package persistance
 
 import (
-	"log"
 	"oees/domain/entity"
 	"oees/domain/repository"
 
@@ -35,7 +34,6 @@ func (deviceDataRepo *deviceDataRepo) Create(deviceData *entity.DeviceData) (*en
 
 func (deviceDataRepo *deviceDataRepo) List(conditions string) ([]entity.DeviceData, error) {
 	deviceData := []entity.DeviceData{}
-	log.Println(conditions)
 	getErr := deviceDataRepo.db.
 		Preload("Device.CreatedBy").
 		Preload("Device.CreatedBy.UserRole").
