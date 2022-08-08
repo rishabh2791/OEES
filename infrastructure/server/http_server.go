@@ -35,6 +35,7 @@ func NewHTTPServer(serverConfig utilities.ServerConfig, appStore *application.Ap
 	httpServer.InterfaceStore = interfaceStore
 	httpServer.MiddlewareStore = middlewareStore
 	httpServer.AppStore = appStore
+
 	return &httpServer
 }
 
@@ -50,7 +51,6 @@ func (httpServer *HTTPServer) Serve() {
 	lineRouter := NewLineRouter(httpServer.Router.Group("/line/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
 	shiftRouter := NewShiftRouter(httpServer.Router.Group("/shift/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
 	skuRouter := NewSKURouter(httpServer.Router.Group("/sku/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
-	skuSpeedRouter := NewSKUSpeedRouter(httpServer.Router.Group("/sku_speed/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
 	taskRouter := NewTaskRouter(httpServer.Router.Group("/task/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
 	taskBatchRouter := newTaskBatchRouter(httpServer.Router.Group("/task_batch/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
 	userRouter := NewUserRouter(httpServer.Router.Group("/user/"), httpServer.InterfaceStore, httpServer.MiddlewareStore)
@@ -67,7 +67,6 @@ func (httpServer *HTTPServer) Serve() {
 	lineRouter.ServeRoutes()
 	shiftRouter.ServeRoutes()
 	skuRouter.ServeRoutes()
-	skuSpeedRouter.ServeRoutes()
 	taskRouter.ServeRoutes()
 	taskBatchRouter.ServeRoutes()
 	userRoleRouter.ServeRoutes()

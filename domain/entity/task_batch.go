@@ -14,6 +14,7 @@ type TaskBatch struct {
 	TaskID            string     `json:"task_id" gorm:"size:191;not null;uniqueIndex:task_batch;"`
 	Task              *Task      `json:"task"`
 	BatchNumber       string     `json:"batch_number" gorm:"size:20;not null;uniqueIndex:task_batch;"`
+	BatchSize         float32    `json:"batch_size" gorm:"default:0;"`
 	StartTime         time.Time  `json:"start_time"`
 	EndTime           *time.Time `json:"end_time"`
 	Complete          bool       `json:"complete"`

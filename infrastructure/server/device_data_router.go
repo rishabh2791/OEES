@@ -22,6 +22,8 @@ func NewDeviceDataRouter(router *gin.RouterGroup, interfaceStore *interfaces.Int
 }
 
 func (router *DeviceDataRouter) ServeRoutes() {
+	// router.router.GET("/ws/", router.interfaceStore.DeviceDataInterface.WebSocketHandler)
 	router.router.POST("/create/", router.interfaceStore.DeviceDataInterface.Create)
 	router.router.POST("/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.DeviceDataInterface.List)
+	router.router.POST("/total/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.DeviceDataInterface.TotalDeviceData)
 }

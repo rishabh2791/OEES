@@ -39,6 +39,10 @@ func (downtimeInterface *DowntimeInterface) Create(ctx *gin.Context) {
 		return
 	}
 
+	if model.UpdatedByUsername == "" || len(model.UpdatedByUsername) == 0 {
+		model.UpdatedByUsername = "rishabh2791"
+	}
+
 	// Create entry in database.
 	created, creationErr := downtimeInterface.appStore.DowntimeApp.Create(&model)
 	if creationErr != nil {
@@ -123,6 +127,10 @@ func (downtimeInterface *DowntimeInterface) Update(ctx *gin.Context) {
 
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
+	}
+
+	if model.UpdatedByUsername == "" || len(model.UpdatedByUsername) == 0 {
+		model.UpdatedByUsername = "rishabh2791"
 	}
 
 	// Create entry in database.

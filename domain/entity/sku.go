@@ -13,6 +13,10 @@ type SKU struct {
 	Code              string  `json:"code" gorm:"size:20;not null;"`
 	Description       string  `json:"description" gorm:"size:100;not null;"`
 	CaseLot           float32 `json:"case_lot" gorm:"default:1;"`
+	MinWeight         float32 `json:"min_weight" gorm:"default:1;"`
+	ExpectedWeight    float32 `json:"expected_weight" gorm:"default:1;"`
+	LowRunSpeed       int     `json:"low_run_speed" gorm:"default:1;"`
+	HighRunSpeed      int     `json:"high_run_speed" gorm:"default:1;"`
 	CreatedByUsername string  `json:"created_by_username" gorm:"size:20;not null;"`
 	CreatedBy         *User   `json:"created_by"`
 	UpdatedByUsername string  `json:"updated_by_username" gorm:"size:20;not null;"`

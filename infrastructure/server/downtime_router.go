@@ -25,5 +25,5 @@ func (router *DowntimeRouter) ServeRoutes() {
 	router.router.POST("/create/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.interfaceStore.DowntimeInterface.Create)
 	router.router.GET("/:id/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.DowntimeInterface.Get)
 	router.router.POST("/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.DowntimeInterface.List)
-	router.router.PATCH("/:id/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.DowntimeInterface.Update)
+	router.router.PATCH("/:id/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.interfaceStore.DowntimeInterface.Update)
 }
