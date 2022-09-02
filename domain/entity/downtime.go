@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 	"time"
 
 	"github.com/google/uuid"
@@ -30,7 +31,14 @@ func (downtime *Downtime) BeforeCreate(db *gorm.DB) error {
 }
 
 func (downtime *Downtime) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if downtime.LineID == "" || len(downtime.LineID) == 0 {
+		errors["line"] = "Line Details Missing."
+	}
+	if downtime.UpdatedByUsername == "" || len(downtime.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Updated By Missing."
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (downtime *Downtime) Tablename() string {

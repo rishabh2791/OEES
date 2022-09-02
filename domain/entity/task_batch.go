@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 	"time"
 
 	"github.com/google/uuid"
@@ -32,7 +33,20 @@ func (taskBatch *TaskBatch) BeforeCreate(db *gorm.DB) error {
 }
 
 func (taskBatch *TaskBatch) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if taskBatch.TaskID == "" || len(taskBatch.TaskID) == 0 {
+		errors["task"] = "Task Missing."
+	}
+	if taskBatch.BatchNumber == "" || len(taskBatch.BatchNumber) == 0 {
+		errors["batch_number"] = "Batch Number Missing."
+	}
+	if taskBatch.CreatedByUsername == "" || len(taskBatch.CreatedByUsername) == 0 {
+		errors["created_by"] = "Created By Missing."
+	}
+	if taskBatch.UpdatedByUsername == "" || len(taskBatch.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Task Missing."
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (taskBatch *TaskBatch) Tablename() string {

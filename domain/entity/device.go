@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 	"strings"
 
 	"github.com/google/uuid"
@@ -41,7 +42,26 @@ func (device *Device) BeforeCreate(db *gorm.DB) error {
 }
 
 func (device *Device) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if device.DeviceType == "" || len(device.DeviceType) == 0 {
+		errors["device_type"] = "Device Type Missing."
+	}
+	if device.LineID == "" || len(device.LineID) == 0 {
+		errors["line"] = "Line Missing."
+	}
+	if device.Code == "" || len(device.Code) == 0 {
+		errors["code"] = "Device Code Missing."
+	}
+	if device.Description == "" || len(device.Description) == 0 {
+		errors["description"] = "Device Description Missing."
+	}
+	if device.CreatedByUsername == "" || len(device.CreatedByUsername) == 0 {
+		errors["created_by"] = "Created By Missing."
+	}
+	if device.UpdatedByUsername == "" || len(device.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Updated By Missing."
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (device *Device) Tablename() string {

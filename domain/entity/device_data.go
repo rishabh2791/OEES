@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -24,7 +25,11 @@ func (deviceData *DeviceData) BeforeCreate(db *gorm.DB) error {
 }
 
 func (deviceData *DeviceData) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if deviceData.DeviceID == "" || len(deviceData.DeviceID) == 0 {
+		errors["device"] = "Device Details Missing"
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (deviceData *DeviceData) Tablename() string {

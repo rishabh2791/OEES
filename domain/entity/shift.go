@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -28,7 +29,26 @@ func (shift *Shift) BeforeCreate(db *gorm.DB) error {
 }
 
 func (shift *Shift) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if shift.Code == "" || len(shift.Code) == 0 {
+		errors["code"] = "Shift Code Missing"
+	}
+	if shift.Description == "" || len(shift.Description) == 0 {
+		errors["description"] = "Shift Description Missing"
+	}
+	if shift.StartTime == "" || len(shift.StartTime) == 0 {
+		errors["start_time"] = "Shift Start Time Missing"
+	}
+	if shift.EndTime == "" || len(shift.EndTime) == 0 {
+		errors["end_time"] = "Shift End Time Missing"
+	}
+	if shift.CreatedByUsername == "" || len(shift.CreatedByUsername) == 0 {
+		errors["created_by"] = "Created By Missing"
+	}
+	if shift.UpdatedByUsername == "" || len(shift.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Updated By Missing"
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (shift *Shift) Tablename() string {

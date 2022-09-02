@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -28,7 +29,23 @@ func (line *Line) BeforeCreate(db *gorm.DB) error {
 }
 
 func (line *Line) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if line.Code == "" || len(line.Code) == 0 {
+		errors["code"] = "Line Code Missing."
+	}
+	if line.Name == "" || len(line.Name) == 0 {
+		errors["name"] = "Line Name Missing."
+	}
+	if line.IPAddress == "" || len(line.IPAddress) == 0 {
+		errors["ip_address"] = "Line IP Address Missing."
+	}
+	if line.CreatedByUsername == "" || len(line.CreatedByUsername) == 0 {
+		errors["created_by"] = "Created By Missing."
+	}
+	if line.UpdatedByUsername == "" || len(line.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Updated By Missing."
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (line *Line) Tablename() string {

@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -28,7 +29,14 @@ func (userRoleAccess *UserRoleAccess) BeforeCreate(db *gorm.DB) error {
 }
 
 func (userRoleAccess *UserRoleAccess) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if userRoleAccess.UserRoleID == "" || len(userRoleAccess.UserRoleID) == 0 {
+		errors["role"] = "User Role Missing"
+	}
+	if userRoleAccess.Table == "" || len(userRoleAccess.Table) == 0 {
+		errors["table"] = "Table Missing"
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (userRoleAccess *UserRoleAccess) Tablename() string {

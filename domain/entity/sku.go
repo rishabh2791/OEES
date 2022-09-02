@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -31,7 +32,20 @@ func (sku *SKU) BeforeCreate(db *gorm.DB) error {
 }
 
 func (sku *SKU) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if sku.Code == "" || len(sku.Code) == 0 {
+		errors["sku_code"] = "SKU Code Missing"
+	}
+	if sku.Description == "" || len(sku.Description) == 0 {
+		errors["sku_description"] = "SKU Description Missing"
+	}
+	if sku.CreatedByUsername == "" || len(sku.CreatedByUsername) == 0 {
+		errors["created_by"] = "Created By Missing"
+	}
+	if sku.UpdatedByUsername == "" || len(sku.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Updated By Missing"
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (sku *SKU) Tablename() string {

@@ -2,6 +2,7 @@ package entity
 
 import (
 	"oees/domain/value_objects"
+	"oees/infrastructure/utilities"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -28,7 +29,20 @@ func (job *Job) BeforeCreate(db *gorm.DB) error {
 }
 
 func (job *Job) Validate(action string) error {
-	return nil
+	errors := map[string]interface{}{}
+	if job.Code == "" || len(job.Code) == 0 {
+		errors["code"] = "Job Code Missing."
+	}
+	if job.SKUID == "" || len(job.SKUID) == 0 {
+		errors["sku"] = "SKU Missing."
+	}
+	if job.CreatedByUsername == "" || len(job.CreatedByUsername) == 0 {
+		errors["created_by"] = "Created By Missing."
+	}
+	if job.UpdatedByUsername == "" || len(job.UpdatedByUsername) == 0 {
+		errors["updated_by"] = "Updated By Missing."
+	}
+	return utilities.ConvertMapToError(errors)
 }
 
 func (job *Job) Tablename() string {
