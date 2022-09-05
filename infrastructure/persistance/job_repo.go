@@ -2,8 +2,10 @@ package persistance
 
 import (
 	"errors"
+	"log"
 	"oees/domain/entity"
 	"oees/domain/repository"
+	"reflect"
 	"strings"
 
 	"github.com/hashicorp/go-hclog"
@@ -149,7 +151,7 @@ func (jobRepo *jobRepo) List(conditions string) ([]entity.Job, error) {
 
 func (jobRepo *jobRepo) GetOpenJobs() ([]RemoteJob, error) {
 	remoteJobs := []RemoteJob{}
-	jobQuery := "SELECT Job, StockCode, QtyToMake FROM dbo.WipMaster WHERE Complete = 'N' AND (StockCode LIKE '40%' OR StockCode LIKE '80%')"
+	jobQuery := "SELECT Job, StockCode, QtyToMake FROM dbo.WipMaster WHERE Complete = 'N'"
 	rows, getErr := jobRepo.warehouseDB.Raw(jobQuery).Rows()
 	defer rows.Close()
 	if getErr != nil {
@@ -224,6 +226,7 @@ func (jobRepo *jobRepo) PullFromRemote(username string) error {
 		return remoteErr
 	}
 	for _, remoteJob := range remoteJobs {
+		log.Println(remoteJob)
 		jobCode := remoteJob.Job[9:len(remoteJob.Job)]
 		existingSKU := entity.SKU{}
 		getSKUError := jobRepo.db.Where("code = ?", remoteJob.StockCode).Take(&existingSKU).Error
@@ -232,33 +235,37 @@ func (jobRepo *jobRepo) PullFromRemote(username string) error {
 			remoteMaterial, remoteErr := jobRepo.getSKUFromRemote(remoteJob.StockCode)
 			if remoteErr != nil {
 				error += remoteErr.Error()
-			}
-
-			//Create Material
-			material, getErr := jobRepo.createSKU(remoteMaterial, username)
-			if getErr != nil {
-				error += getErr.Error()
-			}
-			existingSKU = *material
-		}
-		job := entity.Job{}
-		job.Code = jobCode
-		job.SKUID = existingSKU.ID
-		job.Plan = remoteJob.QtyToMake * existingSKU.CaseLot
-		job.CreatedByUsername = username
-		job.UpdatedByUsername = username
-		jobCreationError := jobRepo.db.Create(&job).Error
-		if jobCreationError != nil {
-			if strings.Contains(jobCreationError.Error(), "Duplicate") {
-				error += "Job " + job.Code + " already created.\n"
 			} else {
-				error += jobCreationError.Error() + "\n"
+				material, getErr := jobRepo.createSKU(remoteMaterial, username)
+				if getErr != nil {
+					error += getErr.Error()
+				}
+				existingSKU = *material
+			}
+			//Create Material
+		}
+		if (!reflect.DeepEqual(existingSKU, entity.SKU{})) {
+			job := entity.Job{}
+			job.Code = jobCode
+			job.SKUID = existingSKU.ID
+			job.Plan = remoteJob.QtyToMake * existingSKU.CaseLot
+			job.CreatedByUsername = username
+			job.UpdatedByUsername = username
+			jobCreationError := jobRepo.db.Create(&job).Error
+			if jobCreationError != nil {
+				if strings.Contains(jobCreationError.Error(), "Duplicate") {
+					error += "Job " + job.Code + " already created.\n"
+				} else {
+					error += jobCreationError.Error() + "\n"
+				}
 			}
 		}
+
 	}
 	if len(error) == 0 {
 		return nil
 	}
+	log.Println(error)
 	return errors.New(error)
 }
 

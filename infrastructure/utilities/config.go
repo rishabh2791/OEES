@@ -152,10 +152,10 @@ type keyConfig struct {
 
 func NewKeyConfig() *keyConfig {
 	return &keyConfig{
-		AccessTokenPrivateKeyPath:  "./access-private.pem",
-		AccessTokenPublicKeyPath:   "./access-public.pem",
-		RefreshTokenPrivateKeyPath: "./refresh-private.pem",
-		RefreshTokenPublicKeyPath:  "./refresh-public.pem",
+		AccessTokenPrivateKeyPath:  "/home/pi/Development/backend/access-private.pem",
+		AccessTokenPublicKeyPath:   "/home/pi/Development/backend/access-public.pem",
+		RefreshTokenPrivateKeyPath: "/home/pi/Development/backend/refresh-private.pem",
+		RefreshTokenPublicKeyPath:  "/home/pi/Development/backend/refresh-public.pem",
 	}
 }
 

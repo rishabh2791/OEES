@@ -31,7 +31,7 @@ func NewHTTPServer(serverConfig utilities.ServerConfig, appStore *application.Ap
 
 	utilities.GinLogger() // Comment out for terminal logging
 	httpServer.Router = gin.Default()
-	httpServer.Router.Static("/public", "./public")
+	httpServer.Router.Static("/public", "/home/pi/Development/backend/public")
 	httpServer.InterfaceStore = interfaceStore
 	httpServer.MiddlewareStore = middlewareStore
 	httpServer.AppStore = appStore
@@ -88,7 +88,7 @@ func ImageUploader(ctx *gin.Context) {
 	}
 
 	extension := strings.Split(header.Filename, ".")[len(strings.Split(header.Filename, "."))-1]
-	filename := "public/profile_pics/" + uuid.New().String() + "." + extension
+	filename := "/home/pi/Development/backend/public/profile_pics/" + uuid.New().String() + "." + extension
 	out, err := os.Create(filename)
 	if err != nil {
 		response.Status = false
