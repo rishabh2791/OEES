@@ -2,7 +2,6 @@ package persistance
 
 import (
 	"errors"
-	"log"
 	"oees/domain/entity"
 	"oees/domain/repository"
 	"reflect"
@@ -191,12 +190,12 @@ func (jobRepo *jobRepo) GetHighRunSpeed(stockCode string) (int, error) {
 	queryString := "SELECT StockCode, RunSpeed2 FROM [dbo].[InvMaster+] WHERE StockCode = '" + stockCode + "';"
 	rows, getErr := jobRepo.warehouseDB.Raw(queryString).Rows()
 	if getErr != nil {
-		return 12, getErr
+		return 960, getErr
 	}
 	for rows.Next() {
 		scanErr := rows.Scan(&thisStockCode, &runSpeed)
 		if scanErr != nil {
-			return 12, scanErr
+			return 960, scanErr
 		}
 	}
 	return runSpeed, nil
@@ -208,12 +207,12 @@ func (jobRepo *jobRepo) GetLowRunSpeed(stockCode string) (int, error) {
 	queryString := "SELECT StockCode, RunSpeed FROM [dbo].[InvMaster+] WHERE StockCode = '" + stockCode + "';"
 	rows, getErr := jobRepo.warehouseDB.Raw(queryString).Rows()
 	if getErr != nil {
-		return 10, getErr
+		return 720, getErr
 	}
 	for rows.Next() {
 		scanErr := rows.Scan(&thisStockCode, &runSpeed)
 		if scanErr != nil {
-			return 10, scanErr
+			return 720, scanErr
 		}
 	}
 	return runSpeed, nil
@@ -226,7 +225,6 @@ func (jobRepo *jobRepo) PullFromRemote(username string) error {
 		return remoteErr
 	}
 	for _, remoteJob := range remoteJobs {
-		log.Println(remoteJob)
 		jobCode := remoteJob.Job[9:len(remoteJob.Job)]
 		existingSKU := entity.SKU{}
 		getSKUError := jobRepo.db.Where("code = ?", remoteJob.StockCode).Take(&existingSKU).Error
@@ -265,7 +263,6 @@ func (jobRepo *jobRepo) PullFromRemote(username string) error {
 	if len(error) == 0 {
 		return nil
 	}
-	log.Println(error)
 	return errors.New(error)
 }
 

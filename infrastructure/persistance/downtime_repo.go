@@ -1,6 +1,8 @@
 package persistance
 
 import (
+	"errors"
+	"fmt"
 	"oees/domain/entity"
 	"oees/domain/repository"
 
@@ -28,8 +30,14 @@ func (downtimeRepo *downtimeRepo) Create(downtime *entity.Downtime) (*entity.Dow
 	if validationErr != nil {
 		return nil, validationErr
 	}
-	creationErr := downtimeRepo.db.Create(&downtime).Error
-	return downtime, creationErr
+	checkExistingDowntime := []entity.Downtime{}
+	existingQuery := fmt.Sprintf("SELECT * FROM `downtimes` WHERE start_time < '%s' AND (end_time > '%s' OR end_time IS NULL);", downtime.StartTime, downtime.StartTime)
+	downtimeRepo.db.Raw(existingQuery).Find(&checkExistingDowntime)
+	if len(checkExistingDowntime) == 0 {
+		creationErr := downtimeRepo.db.Create(&downtime).Error
+		return downtime, creationErr
+	}
+	return nil, errors.New("Existing Downtime")
 }
 
 func (downtimeRepo *downtimeRepo) Get(id string) (*entity.Downtime, error) {
