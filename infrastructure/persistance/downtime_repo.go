@@ -31,7 +31,7 @@ func (downtimeRepo *downtimeRepo) Create(downtime *entity.Downtime) (*entity.Dow
 		return nil, validationErr
 	}
 	checkExistingDowntime := []entity.Downtime{}
-	existingQuery := fmt.Sprintf("SELECT * FROM `downtimes` WHERE start_time < '%s' AND (end_time > '%s' OR end_time IS NULL);", downtime.StartTime, downtime.StartTime)
+	existingQuery := fmt.Sprintf("SELECT * FROM `downtimes` WHERE line_id = '%s' start_time < '%s' AND (end_time > '%s' OR end_time IS NULL);", downtime.LineID, downtime.StartTime, downtime.StartTime)
 	downtimeRepo.db.Raw(existingQuery).Find(&checkExistingDowntime)
 	if len(checkExistingDowntime) == 0 {
 		creationErr := downtimeRepo.db.Create(&downtime).Error
