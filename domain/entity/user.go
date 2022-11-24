@@ -76,9 +76,6 @@ func (user *User) Validate(action string) error {
 		if user.FirstName == "" || len(user.FirstName) == 0 {
 			errors["first_name"] = "First Name Missing"
 		}
-		if user.Email == "" || len(user.Email) == 0 {
-			errors["email"] = "EMail Missing"
-		}
 		if user.Password == "" || len(user.Password) == 0 {
 			errors["password"] = "Password Missing"
 		}

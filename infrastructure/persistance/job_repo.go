@@ -56,10 +56,7 @@ func (jobRepo *jobRepo) getSKUFromRemote(stockCode string) (*RemoteMaterial, err
 			return nil, scanErr
 		}
 	}
-	caseLot, caseLotErr := jobRepo.GetCaseLot(stockCode)
-	if caseLotErr != nil {
-		return nil, caseLotErr
-	}
+	caseLot, _ := jobRepo.GetCaseLot(stockCode)
 	remoteMaterial.CaseLot = caseLot
 	lowRunSpeed, _ := jobRepo.GetLowRunSpeed(stockCode)
 	remoteMaterial.LowRunSpeed = int(lowRunSpeed / 60)
@@ -137,6 +134,7 @@ func (jobRepo *jobRepo) Get(id string) (*entity.Job, error) {
 
 func (jobRepo *jobRepo) List(conditions string) ([]entity.Job, error) {
 	jobs := []entity.Job{}
+	allJobs := []entity.Job{}
 	getErr := jobRepo.db.
 		Preload("SKU.CreatedBy").
 		Preload("SKU.UpdatedBy").
@@ -145,12 +143,22 @@ func (jobRepo *jobRepo) List(conditions string) ([]entity.Job, error) {
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where(conditions).Find(&jobs).Error
-	return jobs, getErr
+	for _, job := range jobs {
+		skuID := job.SKUID
+		sku := entity.SKU{}
+		jobRepo.db.
+			Preload("CreatedBy.UserRole").
+			Preload("UpdatedBy.UserRole").
+			Preload(clause.Associations).Where("id = ?", skuID).Take(&sku)
+		job.SKU = &sku
+		allJobs = append(allJobs, job)
+	}
+	return allJobs, getErr
 }
 
 func (jobRepo *jobRepo) GetOpenJobs() ([]RemoteJob, error) {
 	remoteJobs := []RemoteJob{}
-	jobQuery := "SELECT Job, StockCode, QtyToMake FROM dbo.WipMaster WHERE Complete = 'N'"
+	jobQuery := "SELECT Job, StockCode, QtyToMake FROM [dbo].[WipMaster] WHERE Complete = 'N'"
 	rows, getErr := jobRepo.warehouseDB.Raw(jobQuery).Rows()
 	defer rows.Close()
 	if getErr != nil {
@@ -173,12 +181,12 @@ func (jobRepo *jobRepo) GetCaseLot(stockCode string) (float32, error) {
 	queryString := "SELECT StockCode, UnitsPerCase FROM [dbo].[InvMaster+] WHERE StockCode = '" + stockCode + "';"
 	rows, getErr := jobRepo.warehouseDB.Raw(queryString).Rows()
 	if getErr != nil {
-		return 0, getErr
+		return 1, getErr
 	}
 	for rows.Next() {
 		scanErr := rows.Scan(&thisStockCode, &unitsPerCase)
 		if scanErr != nil {
-			return 0, scanErr
+			return 1, scanErr
 		}
 	}
 	return unitsPerCase, nil

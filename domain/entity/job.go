@@ -46,5 +46,5 @@ func (job *Job) Validate(action string) error {
 }
 
 func (job *Job) Tablename() string {
-	return "tasks"
+	return "jobs"
 }

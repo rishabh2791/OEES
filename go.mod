@@ -8,6 +8,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-hclog v1.2.0
+	github.com/joho/godotenv v1.4.0
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/driver/sqlserver v1.3.2
@@ -24,7 +25,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
-	github.com/golang/protobuf v1.5.2// indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect

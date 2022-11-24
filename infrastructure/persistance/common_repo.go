@@ -24,7 +24,7 @@ func newCommonRepo(db *gorm.DB, logger hclog.Logger) *commonRepo {
 func (commonRepo *commonRepo) GetTables() ([]string, error) {
 	tables := []string{}
 
-	getErr := commonRepo.DB.Table("information_schema.tables").Where("table_schema = ?", "eazyweigh").Pluck("table_name", &tables).Error
+	getErr := commonRepo.DB.Table("information_schema.tables").Where("table_schema = ?", "oees").Pluck("table_name", &tables).Error
 
 	if getErr != nil {
 		return nil, getErr

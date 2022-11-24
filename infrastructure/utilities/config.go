@@ -1,6 +1,10 @@
 package utilities
 
-import "os"
+import (
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 type ServerConfig struct {
 	ServerAddress string
@@ -69,6 +73,7 @@ type databaseConfig struct {
 
 func NewDatabaseConfig() *databaseConfig {
 	dbConf := databaseConfig{}
+	godotenv.Load("/home/adminscs/Development/Backend/.env")
 	if os.Getenv("oees_database_server") != "" || len(os.Getenv("oees_database_server")) != 0 {
 		dbConf.DbHost = os.Getenv("oees_database_server")
 	} else {
@@ -152,10 +157,10 @@ type keyConfig struct {
 
 func NewKeyConfig() *keyConfig {
 	return &keyConfig{
-		AccessTokenPrivateKeyPath:  "/home/pi/Development/backend/access-private.pem",
-		AccessTokenPublicKeyPath:   "/home/pi/Development/backend/access-public.pem",
-		RefreshTokenPrivateKeyPath: "/home/pi/Development/backend/refresh-private.pem",
-		RefreshTokenPublicKeyPath:  "/home/pi/Development/backend/refresh-public.pem",
+		AccessTokenPrivateKeyPath:  "/home/adminscs/Development/Backend/access-private.pem",
+		AccessTokenPublicKeyPath:   "/home/adminscs/Development/Backend/access-public.pem",
+		RefreshTokenPrivateKeyPath: "/home/adminscs/Development/Backend/refresh-private.pem",
+		RefreshTokenPublicKeyPath:  "/home/adminscs/Development/Backend/refresh-public.pem",
 	}
 }
 
