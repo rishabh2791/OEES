@@ -15,6 +15,7 @@ type SKU struct {
 	Description       string  `json:"description" gorm:"size:100;not null;"`
 	CaseLot           float32 `json:"case_lot" gorm:"default:1;"`
 	MinWeight         float32 `json:"min_weight" gorm:"default:1;"`
+	MaxWeight         float32 `json:"max_weight" gorm:"default:1;"`
 	ExpectedWeight    float32 `json:"expected_weight" gorm:"default:1;"`
 	LowRunSpeed       int     `json:"low_run_speed" gorm:"default:1;"`
 	HighRunSpeed      int     `json:"high_run_speed" gorm:"default:1;"`

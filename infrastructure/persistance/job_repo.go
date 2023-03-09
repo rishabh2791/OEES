@@ -2,6 +2,7 @@ package persistance
 
 import (
 	"errors"
+	"log"
 	"oees/domain/entity"
 	"oees/domain/repository"
 	"reflect"
@@ -35,11 +36,13 @@ type RemoteJob struct {
 }
 
 type RemoteMaterial struct {
-	StockCode    string
-	Description  string
-	CaseLot      float32
-	LowRunSpeed  int
-	HighRunSpeed int
+	StockCode      string
+	Description    string
+	CaseLot        float32
+	LowRunSpeed    int
+	HighRunSpeed   int
+	MinWeight      float32
+	ExpectedWeight float32
 }
 
 func (jobRepo *jobRepo) getSKUFromRemote(stockCode string) (*RemoteMaterial, error) {
@@ -56,12 +59,19 @@ func (jobRepo *jobRepo) getSKUFromRemote(stockCode string) (*RemoteMaterial, err
 			return nil, scanErr
 		}
 	}
-	caseLot, _ := jobRepo.GetCaseLot(stockCode)
-	remoteMaterial.CaseLot = caseLot
-	lowRunSpeed, _ := jobRepo.GetLowRunSpeed(stockCode)
-	remoteMaterial.LowRunSpeed = int(lowRunSpeed / 60)
-	highRunSpeed, _ := jobRepo.GetHighRunSpeed(stockCode)
-	remoteMaterial.HighRunSpeed = int(highRunSpeed / 60)
+	additionalData, dataErr := jobRepo.GetAdditionalSKUData(stockCode)
+	if dataErr != nil {
+		return nil, dataErr
+	}
+
+	log.Println(additionalData)
+
+	remoteMaterial.CaseLot = additionalData["case_lot"].(float32)
+	remoteMaterial.LowRunSpeed = int(additionalData["low_run_speed"].(int) / 60)
+	remoteMaterial.HighRunSpeed = int(additionalData["high_run_speed"].(int) / 60)
+	remoteMaterial.MinWeight = additionalData["min_weight"].(float32)
+	remoteMaterial.ExpectedWeight = additionalData["expected_weight"].(float32)
+
 	return &remoteMaterial, nil
 }
 
@@ -72,6 +82,9 @@ func (jobRepo *jobRepo) createSKU(remoteMaterial *RemoteMaterial, username strin
 	stock.CaseLot = remoteMaterial.CaseLot
 	stock.LowRunSpeed = remoteMaterial.LowRunSpeed
 	stock.HighRunSpeed = remoteMaterial.HighRunSpeed
+	stock.MinWeight = remoteMaterial.MinWeight
+	stock.ExpectedWeight = remoteMaterial.ExpectedWeight
+	stock.MaxWeight = remoteMaterial.ExpectedWeight * 1.01
 
 	stock.CreatedByUsername = username
 	stock.UpdatedByUsername = username
@@ -84,6 +97,26 @@ func (jobRepo *jobRepo) createSKU(remoteMaterial *RemoteMaterial, username strin
 	return &stock, nil
 }
 
+func (jobRepo *jobRepo) updateSKU(id string, remoteMaterial *RemoteMaterial, username string) error {
+	stock := entity.SKU{}
+	stock.Description = remoteMaterial.Description
+	stock.CaseLot = remoteMaterial.CaseLot
+	stock.LowRunSpeed = remoteMaterial.LowRunSpeed
+	stock.HighRunSpeed = remoteMaterial.HighRunSpeed
+	stock.MinWeight = remoteMaterial.MinWeight
+	stock.ExpectedWeight = remoteMaterial.ExpectedWeight
+	stock.MaxWeight = remoteMaterial.ExpectedWeight * 1.01
+
+	stock.UpdatedByUsername = username
+
+	// Create Material
+	stockUpdationErr := jobRepo.db.Table(stock.Tablename()).Where("id = ?", id).Updates(&stock).Error
+	if stockUpdationErr != nil {
+		return stockUpdationErr
+	}
+	return nil
+}
+
 func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 	var stockCode string
 	var quantity float32
@@ -93,7 +126,9 @@ func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 	if stockCode != "" || len(stockCode) != 0 {
 		existingSKU := entity.SKU{}
 		getSKUError := jobRepo.db.Where("code = ?", stockCode).Take(&existingSKU).Error
+
 		if getSKUError != nil {
+			//If SKU does not exist, Create Details
 			//Not Created
 			remoteMaterial, remoteErr := jobRepo.getSKUFromRemote(stockCode)
 			if remoteErr != nil {
@@ -106,7 +141,20 @@ func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 				return nil, getErr
 			}
 			existingSKU = *material
+		} else {
+			//If SKU Exists, Update Details
+			remoteMaterial, remoteErr := jobRepo.getSKUFromRemote(stockCode)
+			if remoteErr != nil {
+				return nil, remoteErr
+			}
+
+			//Update Material
+			updationErr := jobRepo.updateSKU(existingSKU.ID, remoteMaterial, job.CreatedByUsername)
+			if updationErr != nil {
+				return nil, updationErr
+			}
 		}
+
 		job.SKUID = existingSKU.ID
 		job.SKU = &existingSKU
 		job.Plan = float32(quantity)
@@ -175,6 +223,16 @@ func (jobRepo *jobRepo) GetOpenJobs() ([]RemoteJob, error) {
 	return remoteJobs, nil
 }
 
+func (jobRepo *jobRepo) GetAdditionalSKUData(stockCode string) (map[string]interface{}, error) {
+	data := map[string]interface{}{}
+	data["case_lot"], _ = jobRepo.GetCaseLot(stockCode)
+	data["low_run_speed"], _ = jobRepo.GetLowRunSpeed(stockCode)
+	data["high_run_speed"], _ = jobRepo.GetHighRunSpeed(stockCode)
+	data["min_weight"], _ = jobRepo.GetMinWeight(stockCode)
+	data["expected_weight"], _ = jobRepo.GetExpectedWeight(stockCode)
+	return data, nil
+}
+
 func (jobRepo *jobRepo) GetCaseLot(stockCode string) (float32, error) {
 	var unitsPerCase float32
 	var thisStockCode string
@@ -226,6 +284,40 @@ func (jobRepo *jobRepo) GetLowRunSpeed(stockCode string) (int, error) {
 	return runSpeed, nil
 }
 
+func (jobRepo *jobRepo) GetMinWeight(stockCode string) (float32, error) {
+	var minFillWeight float32
+	var thisStockCode string
+	queryString := "SELECT StockCode, MinFillWeight FROM [dbo].[InvMaster+] WHERE StockCode = '" + stockCode + "';"
+	rows, getErr := jobRepo.warehouseDB.Raw(queryString).Rows()
+	if getErr != nil {
+		return 1, getErr
+	}
+	for rows.Next() {
+		scanErr := rows.Scan(&thisStockCode, &minFillWeight)
+		if scanErr != nil {
+			return 1, scanErr
+		}
+	}
+	return minFillWeight, nil
+}
+
+func (jobRepo *jobRepo) GetExpectedWeight(stockCode string) (float32, error) {
+	var expectedFillWeight float32
+	var thisStockCode string
+	queryString := "SELECT StockCode, ExpectedFillWeight FROM [dbo].[InvMaster+] WHERE StockCode = '" + stockCode + "';"
+	rows, getErr := jobRepo.warehouseDB.Raw(queryString).Rows()
+	if getErr != nil {
+		return 1, getErr
+	}
+	for rows.Next() {
+		scanErr := rows.Scan(&thisStockCode, &expectedFillWeight)
+		if scanErr != nil {
+			return 1, scanErr
+		}
+	}
+	return expectedFillWeight, nil
+}
+
 func (jobRepo *jobRepo) PullFromRemote(username string) error {
 	remoteJobs, remoteErr := jobRepo.GetOpenJobs()
 	error := ""
@@ -249,6 +341,18 @@ func (jobRepo *jobRepo) PullFromRemote(username string) error {
 				existingSKU = *material
 			}
 			//Create Material
+		} else {
+			//Created
+			remoteMaterial, remoteErr := jobRepo.getSKUFromRemote(remoteJob.StockCode)
+			if remoteErr != nil {
+				error += remoteErr.Error()
+			} else {
+				getErr := jobRepo.updateSKU(existingSKU.ID, remoteMaterial, username)
+				if getErr != nil {
+					error += getErr.Error()
+				}
+			}
+			//Update Material
 		}
 		if (!reflect.DeepEqual(existingSKU, entity.SKU{})) {
 			job := entity.Job{}
