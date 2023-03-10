@@ -7,4 +7,5 @@ type TaskRepository interface {
 	Get(id string) (*entity.Task, error)
 	List(conditions string) ([]entity.Task, error)
 	Update(id string, update *entity.Task) (*entity.Task, error)
+	Delete(id string) error
 }

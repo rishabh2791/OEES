@@ -123,3 +123,8 @@ func (taskRepo *taskRepo) Update(id string, update *entity.Task) (*entity.Task, 
 
 	return &updated, nil
 }
+
+func (taskRepo *taskRepo) Delete(id string) error {
+	deletionErr := taskRepo.db.Where("id = ?", id).Delete(&entity.Task{}).Error
+	return deletionErr
+}

@@ -185,3 +185,26 @@ func (taskInterface *TaskInterface) Update(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (taskInterface *TaskInterface) Delete(ctx *gin.Context) {
+	response := value_objects.Response{}
+	id := ctx.Param("id")
+
+	// Create entry in database.
+	deletionErr := taskInterface.appStore.TaskApp.Delete(id)
+	if deletionErr != nil {
+		response.Status = false
+		response.Message = deletionErr.Error()
+		response.Payload = ""
+
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Return response.
+	response.Status = true
+	response.Message = "task Deleted."
+	response.Payload = ""
+
+	ctx.JSON(http.StatusOK, response)
+}

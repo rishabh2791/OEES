@@ -22,6 +22,7 @@ type taskAppInterface interface {
 	Get(id string) (*entity.Task, error)
 	List(conditions string) ([]entity.Task, error)
 	Update(id string, update *entity.Task) (*entity.Task, error)
+	Delete(id string) error
 }
 
 func (taskApp *taskApp) Create(task *entity.Task) (*entity.Task, error) {
@@ -38,4 +39,8 @@ func (taskApp *taskApp) List(conditions string) ([]entity.Task, error) {
 
 func (taskApp *taskApp) Update(id string, update *entity.Task) (*entity.Task, error) {
 	return taskApp.taskRepository.Update(id, update)
+}
+
+func (taskApp *taskApp) Delete(id string) error {
+	return taskApp.taskRepository.Delete(id)
 }
