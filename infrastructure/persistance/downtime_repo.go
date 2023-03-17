@@ -35,7 +35,16 @@ func (downtimeRepo *downtimeRepo) Create(downtime *entity.Downtime) (*entity.Dow
 	downtimeRepo.db.Raw(existingQuery).Find(&checkExistingDowntime)
 	if len(checkExistingDowntime) == 0 {
 		creationErr := downtimeRepo.db.Create(&downtime).Error
-		return downtime, creationErr
+		createdDowntime := entity.Downtime{}
+		downtimeRepo.db.
+			Preload("Line.CreatedBy").
+			Preload("Line.CreatedBy.UserRole").
+			Preload("Line.UpdatedBy").
+			Preload("Line.UpdatedBy.UserRole").
+			Preload("UpdatedBy.UserRole").
+			Preload(clause.Associations).
+			Where("id = ?", downtime.ID).Take(&createdDowntime)
+		return &createdDowntime, creationErr
 	}
 	return nil, errors.New("Existing Downtime")
 }

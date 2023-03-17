@@ -18,6 +18,7 @@ type Downtime struct {
 	Controlled        bool       `json:"controlled" gorm:"default:false;"`
 	StartTime         *time.Time `json:"start_time"`
 	EndTime           *time.Time `json:"end_time"`
+	Preset            string     `json:"preset" gorm:"size:1000;"`
 	Description       string     `json:"description" gorm:"size:1000;"`
 	UpdatedByUsername string     `json:"updated_by_username" gorm:"size:20;"`
 	UpdatedBy         *User      `json:"updated_by"`
