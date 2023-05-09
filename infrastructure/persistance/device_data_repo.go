@@ -25,6 +25,34 @@ func newDeviceDataRepo(db *gorm.DB, logger hclog.Logger) *deviceDataRepo {
 }
 
 func (deviceDataRepo *deviceDataRepo) Create(deviceData *entity.DeviceData) (*entity.DeviceData, error) {
+	// If there are counts, from posted JSON, get deviceID and use it to find device details and hence the Line ID.
+	// Check if there are any open downtimes for this lineID and if yes, close it.
+	if deviceData.Value > 0 {
+		deviceID := deviceData.DeviceID
+		device := entity.Device{}
+		getErr := deviceDataRepo.db.
+			Preload(clause.Associations).Where("id = ?", deviceID).Take(&device).Error
+		if getErr != nil {
+			return nil, getErr
+		}
+
+		lineID := device.LineID
+		downtimes := []entity.Downtime{}
+		getErr = deviceDataRepo.db.
+			Preload(clause.Associations).
+			Where("line_id LIKE ? AND end_time IS NULL", lineID).Find(&downtimes).Error
+
+		if len(downtimes) != 0 {
+			for _, downtime := range downtimes {
+				query := "UPDATE downtimes SET end_time = UTC_TIMESTAMP() WHERE id LIKE \"" + downtime.ID + "\""
+				updateErr := deviceDataRepo.db.Exec(query).Error
+				if updateErr != nil {
+					return nil, updateErr
+				}
+			}
+		}
+	}
+
 	validationErr := deviceData.Validate("Create")
 	if validationErr != nil {
 		return nil, validationErr

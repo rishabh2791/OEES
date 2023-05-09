@@ -27,17 +27,24 @@ func (taskBatchRepo *taskBatchRepo) Create(taskBatch *entity.TaskBatch) (*entity
 	taskID := taskBatch.TaskID
 	openTaskBatch := entity.TaskBatch{}
 
-	openTaskBatchErr := taskBatchRepo.db.Where("task_id = ? AND complete = 0", taskID).Take(&openTaskBatch).Error
+	tx := taskBatchRepo.db.Begin()
+
+	openTaskBatchErr := tx.Where("task_id = ? AND complete = 0", taskID).Take(&openTaskBatch).Error
 	if openTaskBatchErr != nil {
 		update := entity.TaskBatch{}
 		update.Complete = true
-		taskBatchRepo.db.Where("id = ?", openTaskBatch.ID).Updates(update)
+		tx.Where("id = ?", openTaskBatch.ID).Updates(update)
 	}
 
-	creationErr := taskBatchRepo.db.Create(&taskBatch).Error
+	creationErr := tx.Create(&taskBatch).Error
+	if creationErr != nil {
+		tx.Rollback()
+		return nil, creationErr
+	}
 
 	createdTaskBatch := entity.TaskBatch{}
-	taskBatchRepo.db.
+
+	tx.
 		Preload("Task.Job.SKU").
 		Preload("Task.Job.SKU.CreatedBy").
 		Preload("Task.Job.SKU.UpdatedBy").
@@ -61,7 +68,9 @@ func (taskBatchRepo *taskBatchRepo) Create(taskBatch *entity.TaskBatch) (*entity
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", taskBatch.ID).Find(&createdTaskBatch)
 
-	return &createdTaskBatch, creationErr
+	tx.Commit()
+
+	return &createdTaskBatch, nil
 }
 
 func (taskBatchRepo *taskBatchRepo) List(taskID string) ([]entity.TaskBatch, error) {
