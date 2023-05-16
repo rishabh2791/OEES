@@ -3,6 +3,7 @@ package persistance
 import (
 	"oees/domain/entity"
 	"oees/domain/repository"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
@@ -33,6 +34,7 @@ func (taskBatchRepo *taskBatchRepo) Create(taskBatch *entity.TaskBatch) (*entity
 	if openTaskBatchErr != nil {
 		update := entity.TaskBatch{}
 		update.Complete = true
+		update.UpdatedAt = time.Now()
 		tx.Where("id = ?", openTaskBatch.ID).Updates(update)
 	}
 
