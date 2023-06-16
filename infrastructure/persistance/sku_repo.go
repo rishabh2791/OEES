@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type skuRepo struct {
@@ -34,19 +33,13 @@ func (skuRepo *skuRepo) Create(sku *entity.SKU) (*entity.SKU, error) {
 
 func (skuRepo *skuRepo) Get(id string) (*entity.SKU, error) {
 	sku := entity.SKU{}
-	getErr := skuRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&sku).Error
+	getErr := skuRepo.db.Where("id = ?", id).Take(&sku).Error
 	return &sku, getErr
 }
 
 func (skuRepo *skuRepo) List(conditions string) ([]entity.SKU, error) {
 	skus := []entity.SKU{}
-	getErr := skuRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(conditions).Find(&skus).Error
+	getErr := skuRepo.db.Where(conditions).Find(&skus).Error
 	return skus, getErr
 }
 
@@ -65,9 +58,6 @@ func (skuRepo *skuRepo) Update(id string, update *entity.SKU) (*entity.SKU, erro
 
 	updated := entity.SKU{}
 	skuRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).
 		Where("id = ?", id).Take(&updated)
 
 	return &updated, nil

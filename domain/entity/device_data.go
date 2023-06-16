@@ -12,7 +12,6 @@ type DeviceData struct {
 	value_objects.BaseModel
 	ID               string  `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
 	DeviceID         string  `json:"device_id" gorm:"size:191;not null;"`
-	Device           *Device `json:"device" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE;"`
 	TheoreticalValue float32 `json:"theoretical_value" gorm:"default:0.0;"`
 	Value            float32 `json:"value" gorm:"default:0.0;"`
 }

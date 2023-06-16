@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type deviceRepo struct {
@@ -34,27 +33,13 @@ func (deviceRepo *deviceRepo) Create(device *entity.Device) (*entity.Device, err
 
 func (deviceRepo *deviceRepo) Get(id string) (*entity.Device, error) {
 	device := entity.Device{}
-	getErr := deviceRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload("Line.CreatedBy").
-		Preload("Line.CreatedBy.UserRole").
-		Preload("Line.UpdatedBy").
-		Preload("Line.UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&device).Error
+	getErr := deviceRepo.db.Where("id = ?", id).Take(&device).Error
 	return &device, getErr
 }
 
 func (deviceRepo *deviceRepo) List(conditions string) ([]entity.Device, error) {
 	devices := []entity.Device{}
-	getErr := deviceRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload("Line.CreatedBy").
-		Preload("Line.CreatedBy.UserRole").
-		Preload("Line.UpdatedBy").
-		Preload("Line.UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(conditions).Find(&devices).Error
+	getErr := deviceRepo.db.Where(conditions).Find(&devices).Error
 	return devices, getErr
 }
 
@@ -69,13 +54,6 @@ func (deviceRepo *deviceRepo) Update(id string, update *entity.Device) (*entity.
 		return nil, updationErr
 	}
 	updated := entity.Device{}
-	deviceRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload("Line.CreatedBy").
-		Preload("Line.CreatedBy.UserRole").
-		Preload("Line.UpdatedBy").
-		Preload("Line.UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&updated)
+	deviceRepo.db.Where("id = ?", id).Take(&updated)
 	return &updated, nil
 }

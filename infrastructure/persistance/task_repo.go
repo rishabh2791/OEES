@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type taskRepo struct {
@@ -34,53 +33,13 @@ func (taskRepo *taskRepo) Create(task *entity.Task) (*entity.Task, error) {
 
 func (taskRepo *taskRepo) Get(id string) (*entity.Task, error) {
 	task := entity.Task{}
-	getErr := taskRepo.db.
-		Preload("Job.SKU").
-		Preload("Job.SKU.CreatedBy").
-		Preload("Job.SKU.UpdatedBy").
-		Preload("Job.SKU.CreatedBy.UserRole").
-		Preload("Job.SKU.UpdatedBy.UserRole").
-		Preload("Job.CreatedBy").
-		Preload("Job.UpdatedBy").
-		Preload("Job.CreatedBy.UserRole").
-		Preload("Job.UpdatedBy.UserRole").
-		Preload("Line.CreatedBy").
-		Preload("Line.UpdatedBy").
-		Preload("Line.CreatedBy.UserRole").
-		Preload("Line.UpdatedBy.UserRole").
-		Preload("Shift.CreatedBy").
-		Preload("Shift.UpdatedBy").
-		Preload("Shift.CreatedBy.UserRole").
-		Preload("Shift.UpdatedBy.UserRole").
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&task).Error
+	getErr := taskRepo.db.Where("id = ?", id).Take(&task).Error
 	return &task, getErr
 }
 
 func (taskRepo *taskRepo) List(conditions string) ([]entity.Task, error) {
 	tasks := []entity.Task{}
-	getErr := taskRepo.db.
-		Preload("Job.SKU").
-		Preload("Job.SKU.CreatedBy").
-		Preload("Job.SKU.UpdatedBy").
-		Preload("Job.SKU.CreatedBy.UserRole").
-		Preload("Job.SKU.UpdatedBy.UserRole").
-		Preload("Job.CreatedBy").
-		Preload("Job.UpdatedBy").
-		Preload("Job.CreatedBy.UserRole").
-		Preload("Job.UpdatedBy.UserRole").
-		Preload("Line.CreatedBy").
-		Preload("Line.UpdatedBy").
-		Preload("Line.CreatedBy.UserRole").
-		Preload("Line.UpdatedBy.UserRole").
-		Preload("Shift.CreatedBy").
-		Preload("Shift.UpdatedBy").
-		Preload("Shift.CreatedBy.UserRole").
-		Preload("Shift.UpdatedBy.UserRole").
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(conditions).Find(&tasks).Error
+	getErr := taskRepo.db.Where(conditions).Find(&tasks).Error
 	return tasks, getErr
 }
 
@@ -99,26 +58,6 @@ func (taskRepo *taskRepo) Update(id string, update *entity.Task) (*entity.Task, 
 
 	updated := entity.Task{}
 	taskRepo.db.
-		Preload("Job.SKU").
-		Preload("Job.SKU.CreatedBy").
-		Preload("Job.SKU.UpdatedBy").
-		Preload("Job.SKU.CreatedBy.UserRole").
-		Preload("Job.SKU.UpdatedBy.UserRole").
-		Preload("Job.CreatedBy").
-		Preload("Job.UpdatedBy").
-		Preload("Job.CreatedBy.UserRole").
-		Preload("Job.UpdatedBy.UserRole").
-		Preload("Line.CreatedBy").
-		Preload("Line.UpdatedBy").
-		Preload("Line.CreatedBy.UserRole").
-		Preload("Line.UpdatedBy.UserRole").
-		Preload("Shift.CreatedBy").
-		Preload("Shift.UpdatedBy").
-		Preload("Shift.CreatedBy.UserRole").
-		Preload("Shift.UpdatedBy.UserRole").
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).
 		Where("id = ?", id).Take(&updated)
 
 	return &updated, nil

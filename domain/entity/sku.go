@@ -20,9 +20,7 @@ type SKU struct {
 	LowRunSpeed       int     `json:"low_run_speed" gorm:"default:1;"`
 	HighRunSpeed      int     `json:"high_run_speed" gorm:"default:1;"`
 	CreatedByUsername string  `json:"created_by_username" gorm:"size:20;not null;"`
-	CreatedBy         *User   `json:"created_by"`
 	UpdatedByUsername string  `json:"updated_by_username" gorm:"size:20;not null;"`
-	UpdatedBy         *User   `json:"updated_by"`
 }
 
 var _ Model = &SKU{}

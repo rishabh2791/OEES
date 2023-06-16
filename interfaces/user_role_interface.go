@@ -96,6 +96,27 @@ func (userRoleInterface *UserRoleInterface) CreateMultiple(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+func (userRoleInterface *UserRoleInterface) Get(ctx *gin.Context) {
+	response := value_objects.Response{}
+	userRoleID := ctx.Param("user_role_id")
+
+	userRoles, err := userRoleInterface.appStore.UserRoleApp.Get(userRoleID)
+	if err != nil {
+		response.Status = false
+		response.Message = err.Error()
+		response.Payload = ""
+
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response.Status = true
+	response.Message = "User Roles Found"
+	response.Payload = userRoles
+
+	ctx.JSON(http.StatusOK, response)
+}
+
 func (userRoleInterface *UserRoleInterface) List(ctx *gin.Context) {
 	response := value_objects.Response{}
 	conditions := map[string]interface{}{}

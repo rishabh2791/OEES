@@ -12,16 +12,15 @@ import (
 
 type User struct {
 	value_objects.BaseModel
-	UserRoleID string    `json:"user_role_id" gorm:"size:191;not null;"`
-	UserRole   *UserRole `json:"user_role"`
-	Username   string    `json:"username" gorm:"size:20;not null;unique;primaryKey;"`
-	FirstName  string    `json:"first_name" gorm:"size:100;not null;"`
-	LastName   string    `json:"last_name" gorm:"size:100;"`
-	Password   string    `json:"password" gorm:"size:200;not null;"`
-	Email      string    `json:"email" gorm:"size:100;"`
-	ProfilePic string    `json:"profile_pic" gorm:"size:1000;not null;default:'public/profile_pics/default.jpg'"`
-	Active     bool      `json:"active" gorm:"default:true;"`
-	SecretKey  string    `json:"secret_key" gorm:"size:191;"`
+	UserRoleID string `json:"user_role_id" gorm:"size:191;not null;"`
+	Username   string `json:"username" gorm:"size:20;not null;unique;primaryKey;"`
+	FirstName  string `json:"first_name" gorm:"size:100;not null;"`
+	LastName   string `json:"last_name" gorm:"size:100;"`
+	Password   string `json:"password" gorm:"size:200;not null;"`
+	Email      string `json:"email" gorm:"size:100;"`
+	ProfilePic string `json:"profile_pic" gorm:"size:1000;not null;default:'public/profile_pics/default.jpg'"`
+	Active     bool   `json:"active" gorm:"default:true;"`
+	SecretKey  string `json:"secret_key" gorm:"size:191;"`
 }
 
 var _ Model = &User{}

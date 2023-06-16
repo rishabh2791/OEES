@@ -10,7 +10,6 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type jobRepo struct {
@@ -121,11 +120,11 @@ func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 	var stockCode string
 	var quantity float32
 	quantity = float32(job.Plan)
-	stockCode = job.SKU.Code
+	stockCode = job.SKUID
 
 	if stockCode != "" || len(stockCode) != 0 {
 		existingSKU := entity.SKU{}
-		getSKUError := jobRepo.db.Where("code = ?", stockCode).Take(&existingSKU).Error
+		getSKUError := jobRepo.db.Where("id = ?", stockCode).Take(&existingSKU).Error
 
 		if getSKUError != nil {
 			//If SKU does not exist, Create Details
@@ -143,20 +142,19 @@ func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 			existingSKU = *material
 		} else {
 			//If SKU Exists, Update Details
-			remoteMaterial, remoteErr := jobRepo.getSKUFromRemote(stockCode)
+			remoteMaterial, remoteErr := jobRepo.getSKUFromRemote(existingSKU.Code)
 			if remoteErr != nil {
 				return nil, remoteErr
 			}
 
 			//Update Material
-			updationErr := jobRepo.updateSKU(existingSKU.ID, remoteMaterial, job.CreatedByUsername)
+			updationErr := jobRepo.updateSKU(stockCode, remoteMaterial, job.CreatedByUsername)
 			if updationErr != nil {
 				return nil, updationErr
 			}
 		}
 
 		job.SKUID = existingSKU.ID
-		job.SKU = &existingSKU
 		job.Plan = float32(quantity)
 
 		creationErr := jobRepo.db.Create(&job).Error
@@ -169,38 +167,13 @@ func (jobRepo *jobRepo) Create(job *entity.Job) (*entity.Job, error) {
 
 func (jobRepo *jobRepo) Get(id string) (*entity.Job, error) {
 	job := entity.Job{}
-	getErr := jobRepo.db.
-		Preload("SKU.CreatedBy").
-		Preload("SKU.UpdatedBy").
-		Preload("SKU.CreatedBy.UserRole").
-		Preload("SKU.UpdatedBy.UserRole").
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&job).Error
+	getErr := jobRepo.db.Where("id = ?", id).Take(&job).Error
 	return &job, getErr
 }
 
 func (jobRepo *jobRepo) List(conditions string) ([]entity.Job, error) {
-	jobs := []entity.Job{}
 	allJobs := []entity.Job{}
-	getErr := jobRepo.db.
-		Preload("SKU.CreatedBy").
-		Preload("SKU.UpdatedBy").
-		Preload("SKU.CreatedBy.UserRole").
-		Preload("SKU.UpdatedBy.UserRole").
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(conditions).Find(&jobs).Error
-	for _, job := range jobs {
-		skuID := job.SKUID
-		sku := entity.SKU{}
-		jobRepo.db.
-			Preload("CreatedBy.UserRole").
-			Preload("UpdatedBy.UserRole").
-			Preload(clause.Associations).Where("id = ?", skuID).Take(&sku)
-		job.SKU = &sku
-		allJobs = append(allJobs, job)
-	}
+	getErr := jobRepo.db.Where(conditions).Find(&allJobs).Error
 	return allJobs, getErr
 }
 

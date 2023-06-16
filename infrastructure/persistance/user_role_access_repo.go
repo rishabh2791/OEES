@@ -50,10 +50,7 @@ func (userRoleAccessRepo *UserRoleAccessRepo) Create(userRoleAccess *entity.User
 func (userRoleAccessRepo *UserRoleAccessRepo) List(userRoleID string) ([]entity.UserRoleAccess, error) {
 	userRoleAccesses := []entity.UserRoleAccess{}
 
-	getErr := userRoleAccessRepo.DB.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("user_role_id = ?", userRoleID).Find(&userRoleAccesses).Error
+	getErr := userRoleAccessRepo.DB.Where("user_role_id = ?", userRoleID).Find(&userRoleAccesses).Error
 	if getErr != nil {
 		return nil, getErr
 	}
@@ -64,7 +61,7 @@ func (userRoleAccessRepo *UserRoleAccessRepo) List(userRoleID string) ([]entity.
 func (userRoleAccessRepo *UserRoleAccessRepo) Update(userRoleID string, userRoleAccess *entity.UserRoleAccess) (*entity.UserRoleAccess, error) {
 	existingRoleAccess := entity.UserRoleAccess{}
 
-	getErr := userRoleAccessRepo.DB.Preload(clause.Associations).Where("user_role_id = ?", userRoleID).Take(&existingRoleAccess).Error
+	getErr := userRoleAccessRepo.DB.Where("user_role_id = ?", userRoleID).Take(&existingRoleAccess).Error
 	if getErr != nil {
 		return nil, getErr
 	}
@@ -75,10 +72,7 @@ func (userRoleAccessRepo *UserRoleAccessRepo) Update(userRoleID string, userRole
 	}
 
 	updated := entity.UserRoleAccess{}
-	userRoleAccessRepo.DB.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("user_role_id = ?", userRoleID).Take(&updated)
+	userRoleAccessRepo.DB.Where("user_role_id = ?", userRoleID).Take(&updated)
 
 	return &updated, nil
 }

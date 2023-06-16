@@ -16,9 +16,7 @@ type Shift struct {
 	StartTime         string `json:"start_time" gorm:"size:5;not null;"`
 	EndTime           string `json:"end_time" gorm:"size:5;not null;"`
 	CreatedByUsername string `json:"created_by_username" gorm:"size:20;not null;"`
-	CreatedBy         *User  `json:"created_by"`
 	UpdatedByUsername string `json:"updated_by_username" gorm:"size:20;not null;"`
-	UpdatedBy         *User  `json:"updated_by"`
 }
 
 var _ Model = &Shift{}

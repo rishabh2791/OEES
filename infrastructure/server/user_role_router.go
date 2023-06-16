@@ -24,5 +24,6 @@ func NewUserRoleRouter(router *gin.RouterGroup, interfaceStore *interfaces.Inter
 func (router *UserRoleRouter) ServeRoutes() {
 	router.router.POST("/create/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.UserRoleInterface.Create)
 	router.router.POST("/create/multi/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.UserRoleInterface.CreateMultiple)
+	router.router.GET("/get/:user_role_id/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.UserRoleInterface.Get)
 	router.router.POST("/", router.middlewares.CORSMiddleware.AddCORSMiddleware(), router.middlewares.AuthMiddleware.ValidateAccessToken(), router.interfaceStore.UserRoleInterface.List)
 }

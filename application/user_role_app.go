@@ -21,11 +21,16 @@ func (userRoleApp *userRoleApp) Create(userRole *entity.UserRole) (*entity.UserR
 	return userRoleApp.userRoleRepository.Create(userRole)
 }
 
+func (userRoleApp *userRoleApp) Get(userRoleID string) (*entity.UserRole, error) {
+	return userRoleApp.userRoleRepository.Get(userRoleID)
+}
+
 func (userRoleApp *userRoleApp) List(conditions string) ([]entity.UserRole, error) {
 	return userRoleApp.userRoleRepository.List(conditions)
 }
 
 type userRoleAppInterface interface {
 	Create(userRole *entity.UserRole) (*entity.UserRole, error)
+	Get(userRoleID string) (*entity.UserRole, error)
 	List(conditions string) ([]entity.UserRole, error)
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type lineRepo struct {
@@ -34,19 +33,13 @@ func (lineRepo *lineRepo) Create(line *entity.Line) (*entity.Line, error) {
 
 func (lineRepo *lineRepo) Get(id string) (*entity.Line, error) {
 	line := entity.Line{}
-	getErr := lineRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&line).Error
+	getErr := lineRepo.db.Where("id = ?", id).Take(&line).Error
 	return &line, getErr
 }
 
 func (lineRepo *lineRepo) List(conditions string) ([]entity.Line, error) {
 	lines := []entity.Line{}
-	getErr := lineRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(conditions).Find(&lines).Error
+	getErr := lineRepo.db.Where(conditions).Find(&lines).Error
 	return lines, getErr
 }
 
@@ -61,9 +54,6 @@ func (lineRepo *lineRepo) Update(id string, update *entity.Line) (*entity.Line, 
 		return nil, updationErr
 	}
 	updated := entity.Line{}
-	lineRepo.db.
-		Preload("CreatedBy.UserRole").
-		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where("id = ?", id).Take(&updated)
+	lineRepo.db.Where("id = ?", id).Take(&updated)
 	return &updated, nil
 }

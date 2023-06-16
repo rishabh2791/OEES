@@ -15,14 +15,11 @@ type Device struct {
 	ID                string `json:"id" gorm:"size:191;not null;unique;primaryKey;"`
 	DeviceType        string `json:"device_type" gorm:"size:30;not null;"`
 	LineID            string `json:"line_id" gorm:"size:191;not null;uniqueIndex:plant_line_sku;"`
-	Line              *Line  `json:"line" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE;"`
 	Code              string `json:"code" gorm:"size:20;not null;uniqueIndex:plant_line_sku;"`
 	Description       string `json:"description" gorm:"size:100;not null;"`
 	UseForOEE         bool   `json:"use_for_oee" gorm:"default:false;"`
 	CreatedByUsername string `json:"created_by_username" gorm:"size:20;not null;"`
-	CreatedBy         *User  `json:"created_by"`
 	UpdatedByUsername string `json:"updated_by_username" gorm:"size:20;not null;"`
-	UpdatedBy         *User  `json:"updated_by"`
 }
 
 var _ Model = &Device{}
