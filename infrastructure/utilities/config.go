@@ -133,7 +133,7 @@ func NewCacheConfig() *cacheConfig {
 	if os.Getenv("cache_server") != "" || len(os.Getenv("cache_server")) != 0 {
 		cacheConf.CacheHost = os.Getenv("cache_server")
 	} else {
-		cacheConf.CacheHost = "localhost"
+		cacheConf.CacheHost = "10.19.0.40"
 	}
 	if os.Getenv("cache_port") != "" || len(os.Getenv("cache_port")) != 0 {
 		cacheConf.CachePort = os.Getenv("cache_port")
