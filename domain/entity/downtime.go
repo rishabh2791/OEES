@@ -12,12 +12,12 @@ import (
 type Downtime struct {
 	value_objects.BaseModel
 	ID                string     `json:"id" gorm:"size:191;not null;primaryKey;unique;"`
-	LineID            string     `json:"line_id" gorm:"size:191;not null;"`
+	LineID            string     `json:"line_id" gorm:"size:191;not null;uniqueIndex:unique_dt_line_start_end;uniqueIndex:unique_dt_line_start;"`
 	Line              *Line      `json:"line"`
 	Planned           bool       `json:"planned" gorm:"default:false;"`
 	Controlled        bool       `json:"controlled" gorm:"default:false;"`
-	StartTime         *time.Time `json:"start_time"`
-	EndTime           *time.Time `json:"end_time"`
+	StartTime         *time.Time `json:"start_time" gorm:"uniqueIndex:unique_dt_line_start_end;uniqueIndex:unique_dt_line_start;"`
+	EndTime           *time.Time `json:"end_time" gorm:"uniqueIndex:unique_dt_line_start_end;"`
 	Preset            string     `json:"preset" gorm:"size:1000;"`
 	Description       string     `json:"description" gorm:"size:1000;"`
 	UpdatedByUsername string     `json:"updated_by_username" gorm:"size:20;"`
