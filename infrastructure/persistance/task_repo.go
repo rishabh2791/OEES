@@ -1,6 +1,7 @@
 package persistance
 
 import (
+	"fmt"
 	"oees/domain/entity"
 	"oees/domain/repository"
 
@@ -34,6 +35,7 @@ func (taskRepo *taskRepo) Create(task *entity.Task) (*entity.Task, error) {
 
 func (taskRepo *taskRepo) Get(id string) (*entity.Task, error) {
 	task := entity.Task{}
+
 	getErr := taskRepo.db.
 		Preload("Job.SKU").
 		Preload("Job.SKU.CreatedBy").
@@ -55,6 +57,35 @@ func (taskRepo *taskRepo) Get(id string) (*entity.Task, error) {
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
 		Preload(clause.Associations).Where("id = ?", id).Take(&task).Error
+
+	return &task, getErr
+}
+
+func (taskRepo *taskRepo) GetLast(lineID string) (*entity.Task, error) {
+	task := entity.Task{}
+
+	queryString := fmt.Sprintf("SELECT * FROM tasks WHERE line_id = '%s' ORDER BY start_time DESC LIMIT 1", lineID)
+	getErr := taskRepo.db.Preload("Job.SKU").
+		Preload("Job.SKU.CreatedBy").
+		Preload("Job.SKU.UpdatedBy").
+		Preload("Job.SKU.CreatedBy.UserRole").
+		Preload("Job.SKU.UpdatedBy.UserRole").
+		Preload("Job.CreatedBy").
+		Preload("Job.UpdatedBy").
+		Preload("Job.CreatedBy.UserRole").
+		Preload("Job.UpdatedBy.UserRole").
+		Preload("Line.CreatedBy").
+		Preload("Line.UpdatedBy").
+		Preload("Line.CreatedBy.UserRole").
+		Preload("Line.UpdatedBy.UserRole").
+		Preload("Shift.CreatedBy").
+		Preload("Shift.UpdatedBy").
+		Preload("Shift.CreatedBy.UserRole").
+		Preload("Shift.UpdatedBy.UserRole").
+		Preload("CreatedBy.UserRole").
+		Preload("UpdatedBy.UserRole").
+		Preload(clause.Associations).Where(queryString).Take(task).Error
+
 	return &task, getErr
 }
 

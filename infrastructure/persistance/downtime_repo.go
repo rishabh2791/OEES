@@ -74,7 +74,7 @@ func (downtimeRepo *downtimeRepo) Update(id string, update *entity.Downtime) (*e
 	existingDowntime := entity.Downtime{}
 
 	lastDowntimeWithSameOriginalDowntime := []entity.Downtime{}
-	query := fmt.Sprintf("original_downtime_id = `%s` ORDER BY `start_time` DESC LIMIT 1", id)
+	query := fmt.Sprintf("original_downtime_id = '%s' ORDER BY `start_time` DESC LIMIT 1", id)
 	getOriginalErr := downtimeRepo.db.Where(query).Find(&lastDowntimeWithSameOriginalDowntime).Error
 	if getOriginalErr != nil {
 		return nil, getOriginalErr

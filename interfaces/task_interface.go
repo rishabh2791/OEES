@@ -121,6 +121,27 @@ func (taskInterface *TaskInterface) Get(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+func (taskInterface *TaskInterface) GetLast(ctx *gin.Context) {
+	response := value_objects.Response{}
+
+	lineID := ctx.Param("line_id")
+	task, err := taskInterface.appStore.TaskApp.GetLast(lineID)
+	if err != nil {
+		response.Status = false
+		response.Message = err.Error()
+		response.Payload = ""
+
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response.Status = true
+	response.Message = "task Found"
+	response.Payload = task
+
+	ctx.JSON(http.StatusOK, response)
+}
+
 func (taskInterface *TaskInterface) List(ctx *gin.Context) {
 	response := value_objects.Response{}
 	conditions := map[string]interface{}{}
