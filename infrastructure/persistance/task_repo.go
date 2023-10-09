@@ -64,7 +64,7 @@ func (taskRepo *taskRepo) Get(id string) (*entity.Task, error) {
 func (taskRepo *taskRepo) GetLast(lineID string) (*entity.Task, error) {
 	task := entity.Task{}
 
-	queryString := fmt.Sprintf("SELECT * FROM tasks WHERE line_id = '%s' ORDER BY start_time DESC LIMIT 1", lineID)
+	queryString := fmt.Sprintf("line_id = '%s'", lineID)
 	getErr := taskRepo.db.Preload("Job.SKU").
 		Preload("Job.SKU.CreatedBy").
 		Preload("Job.SKU.UpdatedBy").
@@ -84,7 +84,7 @@ func (taskRepo *taskRepo) GetLast(lineID string) (*entity.Task, error) {
 		Preload("Shift.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(queryString).Take(task).Error
+		Preload(clause.Associations).Where(queryString).Order("start_time desc").Take(&task).Error
 
 	return &task, getErr
 }
