@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oees/domain/entity"
 	"oees/domain/repository"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 	"gorm.io/gorm"
@@ -61,10 +62,42 @@ func (taskRepo *taskRepo) Get(id string) (*entity.Task, error) {
 	return &task, getErr
 }
 
-func (taskRepo *taskRepo) GetLast(lineID string) (*entity.Task, error) {
-	task := entity.Task{}
+func (taskRepo *taskRepo) GetLast(lineID string, taskID string) (*entity.Task, error) {
+	currentTask := entity.Task{}
 
-	queryString := fmt.Sprintf("line_id = '%s'", lineID)
+	currentTaskGetErr := taskRepo.db.Preload("Job.SKU").
+		Preload("Job.SKU.CreatedBy").
+		Preload("Job.SKU.UpdatedBy").
+		Preload("Job.SKU.CreatedBy.UserRole").
+		Preload("Job.SKU.UpdatedBy.UserRole").
+		Preload("Job.CreatedBy").
+		Preload("Job.UpdatedBy").
+		Preload("Job.CreatedBy.UserRole").
+		Preload("Job.UpdatedBy.UserRole").
+		Preload("Line.CreatedBy").
+		Preload("Line.UpdatedBy").
+		Preload("Line.CreatedBy.UserRole").
+		Preload("Line.UpdatedBy.UserRole").
+		Preload("Shift.CreatedBy").
+		Preload("Shift.UpdatedBy").
+		Preload("Shift.CreatedBy.UserRole").
+		Preload("Shift.UpdatedBy.UserRole").
+		Preload("CreatedBy.UserRole").
+		Preload("UpdatedBy.UserRole").
+		Preload(clause.Associations).Where("id = ?", taskID).Take(&currentTask).Error
+	if currentTaskGetErr != nil {
+		return nil, currentTaskGetErr
+	}
+
+	currentTaskStartTime := time.Now()
+
+	if currentTask.StartTime != nil {
+		currentTaskStartTime = *currentTask.StartTime
+	}
+
+	tasks := []entity.Task{}
+
+	queryString := fmt.Sprintf("line_id = '%s' AND start_time <= '%s'", lineID, currentTaskStartTime)
 	getErr := taskRepo.db.Preload("Job.SKU").
 		Preload("Job.SKU.CreatedBy").
 		Preload("Job.SKU.UpdatedBy").
@@ -84,9 +117,12 @@ func (taskRepo *taskRepo) GetLast(lineID string) (*entity.Task, error) {
 		Preload("Shift.UpdatedBy.UserRole").
 		Preload("CreatedBy.UserRole").
 		Preload("UpdatedBy.UserRole").
-		Preload(clause.Associations).Where(queryString).Order("start_time desc").Take(&task).Error
+		Preload(clause.Associations).Where(queryString).Order("start_time desc").Limit(2).Find(&tasks).Error
 
-	return &task, getErr
+	if len(tasks) > 1 {
+		return &tasks[1], getErr
+	}
+	return &tasks[0], nil
 }
 
 func (taskRepo *taskRepo) List(conditions string) ([]entity.Task, error) {

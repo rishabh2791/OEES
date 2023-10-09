@@ -20,7 +20,7 @@ func newTaskApp(taskRepository repository.TaskRepository) *taskApp {
 type taskAppInterface interface {
 	Create(task *entity.Task) (*entity.Task, error)
 	Get(id string) (*entity.Task, error)
-	GetLast(lineID string) (*entity.Task, error)
+	GetLast(lineID string, taskID string) (*entity.Task, error)
 	List(conditions string) ([]entity.Task, error)
 	Update(id string, update *entity.Task) (*entity.Task, error)
 	Delete(id string) error
@@ -34,8 +34,8 @@ func (taskApp *taskApp) Get(id string) (*entity.Task, error) {
 	return taskApp.taskRepository.Get(id)
 }
 
-func (taskApp *taskApp) GetLast(lineID string) (*entity.Task, error) {
-	return taskApp.taskRepository.GetLast(lineID)
+func (taskApp *taskApp) GetLast(lineID string, taskID string) (*entity.Task, error) {
+	return taskApp.taskRepository.GetLast(lineID, taskID)
 }
 
 func (taskApp *taskApp) List(conditions string) ([]entity.Task, error) {

@@ -125,7 +125,8 @@ func (taskInterface *TaskInterface) GetLast(ctx *gin.Context) {
 	response := value_objects.Response{}
 
 	lineID := ctx.Param("line_id")
-	task, err := taskInterface.appStore.TaskApp.GetLast(lineID)
+	taskID := ctx.Param("task_id")
+	task, err := taskInterface.appStore.TaskApp.GetLast(lineID, taskID)
 	if err != nil {
 		response.Status = false
 		response.Message = err.Error()
